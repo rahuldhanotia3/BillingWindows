@@ -21,5 +21,14 @@ namespace ProductCRMAPI.DAL
             Param[3] = new SqlParameter("enumIsMasterPolicy",obj.enumIsMasterPolicy);
             return SqlHelper.ExecuteDataset(SqlHelper.ConnectionString, CommandType.StoredProcedure, "usp_GetTotalMasterPolicyList", Param);
         }
+
+        public DataSet APILog(ParametersEntity obj) //RKS
+        {
+            SqlParameter[] Param = new SqlParameter[5];
+            Param[1] = new SqlParameter("@VchUrl", obj.VchUrl);
+            Param[2] = new SqlParameter("@VchRequest", obj.VchRequest);
+            Param[3] = new SqlParameter("@VchResponse", obj.VchResponse);
+            return SqlHelper.ExecuteDataset(SqlHelper.ConnectionString, CommandType.StoredProcedure, "usp_ProductCRMApiLog", Param);
+        }
     }
 }

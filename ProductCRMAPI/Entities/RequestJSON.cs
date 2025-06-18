@@ -60,6 +60,7 @@ namespace ProductCRMAPI.Entities
     public class PolicyCoverTagging
     {
         public string mnySumInsured { get; set; }
+        public string vchGroupId { get; set; }
         public List<CoverTagging> CoverTagging { get; set; }
     }
     public class CoverPartDetail
@@ -98,4 +99,83 @@ namespace ProductCRMAPI.Entities
         public string vchRemarks { get; set; }
         public string Status { get; set; }
     }
+    public class AuthApiResp
+    {
+        public string status { get; set; }
+        public string Message { get; set; }
+        public Data Data { get; set; }
+    }
+    public class Data
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string EMail { get; set; }
+        public string TokenNumber { get; set; }
+        public string ExpireAt { get; set; }
+    }
+
+    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse);
+    public class Cover
+    {
+        public string Message { get; set; }
+    }
+
+    public class CoverPartDetail1
+    {
+        public string Message { get; set; }
+    }
+
+    public class CoverTagging1
+    {
+        public string Message { get; set; }
+    }
+
+    public class GroupPolicyTagging1
+    {
+        public string Message { get; set; }
+    }
+
+    public class LOB
+    {
+        public string Message { get; set; }
+    }
+
+    public class PolicyCoverTagging1
+    {
+        public string Message { get; set; }
+    }
+
+    public class Product
+    {
+        public string Message { get; set; }
+    }
+
+    public class Result
+    {
+        public string Status { get; set; }
+        public string Message { get; set; }
+        public List<LOB> LOB { get; set; }
+        public List<Product> Product { get; set; }
+        public List<Cover> Cover { get; set; }
+        public List<GroupPolicyTagging1> GroupPolicyTagging { get; set; }
+        public List<PolicyCoverTagging1> PolicyCoverTagging { get; set; }
+        public List<CoverPartDetail1> CoverPartDetails { get; set; }
+        public List<CoverTagging1> CoverTagging { get; set; }
+        public List<SubCoverTagging1> SubCoverTagging { get; set; }
+    }
+
+    public class ResponceProduct
+    {
+        public string OverallStatus { get; set; }
+        public List<Result> Results { get; set; }
+    }
+
+    public class SubCoverTagging1
+    {
+        public string Message { get; set; }
+    }
+
+
+
+
 }

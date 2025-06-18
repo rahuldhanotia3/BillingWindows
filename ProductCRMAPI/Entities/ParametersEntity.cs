@@ -12,5 +12,8 @@ namespace ProductCRMAPI.Entities
         public string Policyno { get; set; }
         public string Policyinfoid { get; set; }
         public string enumIsMasterPolicy { get; set; }
+        public string VchUrl { get; set; }
+        public string VchRequest { get; set; }
+        public string VchResponse { get; set; }
     }
 }
