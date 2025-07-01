@@ -15,6 +15,8 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Newtonsoft.Json;
 using System.IO;
 using System.Configuration;
+using System.Net.Http.Headers;
+using System.Net.Http;
 
 namespace ProductCRMAPI
 {
@@ -49,22 +51,22 @@ namespace ProductCRMAPI
                         string Policyno = ds.Tables[0].Rows[t]["vchPolicyNumber"].ToString();
                         string Policyinfoid = ds.Tables[0].Rows[t]["IntPolicyinfoid"].ToString();
                         string enumIsMasterPolicy = ds.Tables[0].Rows[t]["enumIsMasterPolicy"].ToString();
-                        string AuthReqJason = "{\r\n    \"UserId\" : \""+AuthTokenAPIUserName+ "\",\r\n    \"Password\" : \""+ AuthTokenAPIPsw +"\"\r\n}";
+                        string AuthReqJason = "{\r\n    \"UserId\" : \"" + AuthTokenAPIUserName + "\",\r\n    \"Password\" : \"" + AuthTokenAPIPsw + "\"\r\n}";
                         string sTrResponse = string.Empty;
-                       // ApiPaymentLog(AuthTokenAPIUrl, AuthReqJason,"");
+                        // ApiPaymentLog(AuthTokenAPIUrl, AuthReqJason,"");
                         sTrResponse = APIPostMethod(AuthReqJason, AuthTokenAPIUrl);
                         ApiPaymentLog(AuthTokenAPIUrl, AuthReqJason, sTrResponse);
-                        if (sTrResponse != null) 
+                        if (sTrResponse != null)
                         {
                             AuthApiResp myDeserializedClass = JsonConvert.DeserializeObject<AuthApiResp>(sTrResponse);
-                            if(myDeserializedClass.status == "success")
+                            if (myDeserializedClass.status == "success")
                             {
-                                string TokenNumber=myDeserializedClass.Data.TokenNumber;
-                                GetDataByPolicyInfoID(Policyno, Policyinfoid, enumIsMasterPolicy,TokenNumber);
+                                string TokenNumber = myDeserializedClass.Data.TokenNumber;
+                                GetDataByPolicyInfoID(Policyno, Policyinfoid, enumIsMasterPolicy, TokenNumber);
                             }
                         }
-                      
-                        
+
+
                     }
 
                 }
@@ -79,7 +81,7 @@ namespace ProductCRMAPI
 
         }
 
-        void GetDataByPolicyInfoID(string Policyno, string Policyinfoid, string enumIsMasterPolicy,string Vchtoken)
+        void GetDataByPolicyInfoID(string Policyno, string Policyinfoid, string enumIsMasterPolicy, string Vchtoken)
         {
             string vchTokenNumber = Vchtoken;
             DataSet ds = new DataSet();
@@ -116,7 +118,8 @@ namespace ProductCRMAPI
                 {
                     #region ProductDetail
                     List<ProductDetail> listproductDetails = new List<ProductDetail>();
-                    ProductDetail objProductDetail = new ProductDetail(); 
+
+                    ProductDetail objProductDetail = new ProductDetail();
                     objProductDetail.vchPolicyType = ds.Tables[1].Rows[t]["vchPolicyType"].ToString();
                     objProductDetail.vchProductName = ds.Tables[1].Rows[t]["vchProductName"].ToString();
                     objProductDetail.vchProductCode = ds.Tables[1].Rows[t]["vchProductCode"].ToString();
@@ -135,14 +138,10 @@ namespace ProductCRMAPI
             if (ds.Tables[2] != null)
             {
                 List<CoverDetail> listCoverDetail = new List<CoverDetail>();
-                CoverDetail objCoverDetail = new CoverDetail();
-                List<CoverPartDetail> objListCoverPartDetails = new List<CoverPartDetail>();
-                CoverPartDetail objCoverPartDetail = new CoverPartDetail();
                 for (int t = 0; t < ds.Tables[2].Rows.Count; t++)
                 {
                     #region CoverDetails
-                   
-                   
+                    CoverDetail objCoverDetail = new CoverDetail();
                     objCoverDetail.vchCoverType = ds.Tables[2].Rows[t]["vchCoverType"].ToString();
                     objCoverDetail.vchSection = ds.Tables[2].Rows[t]["vchSection"].ToString();
                     objCoverDetail.vchSectionCode = ds.Tables[2].Rows[t]["vchSectionCode"].ToString();
@@ -153,32 +152,34 @@ namespace ProductCRMAPI
                     objCoverDetail.mnyMinLimit = ds.Tables[2].Rows[t]["mnyMinLimit"].ToString();
                     objCoverDetail.mnyMaxLimit = ds.Tables[2].Rows[t]["mnyMaxLimit"].ToString();
                     objCoverDetail.Status = ds.Tables[2].Rows[t]["Status"].ToString();
-                    objCoverDetail.Remarks= ds.Tables[2].Rows[t]["Remarks"].ToString();
-                   
-                  
+                    objCoverDetail.Remarks = ds.Tables[2].Rows[t]["Remarks"].ToString();
+                    List<CoverPartDetail> objListCoverPartDetails = new List<CoverPartDetail>();
                     #endregion CoverDetails
                     if (ds.Tables[3] != null)
                     {
-                        
-                        for (int t1 = 0; t1 < ds.Tables[3].Rows.Count; t1++)
+                        if (ds.Tables[2].Columns.Contains("vchCoverCode") && (ds.Tables[3].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[2].Rows[t]["vchCoverCode"].ToString()).Count() > 0))
                         {
-                            objCoverPartDetail.vchCoverPartDesc = ds.Tables[3].Rows[t1]["vchCoverPartDesc"].ToString();
-                            objCoverPartDetail.Status = ds.Tables[3].Rows[t1]["Status"].ToString();
-                            objCoverPartDetail.vchCoverCode = ds.Tables[3].Rows[t1]["vchCoverCode"].ToString();
-                           
-                        }
+                            DataTable SubCover = ds.Tables[3].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[2].Rows[t]["vchCoverCode"].ToString()).CopyToDataTable();
 
+                            for (int t3 = 0; t3 < SubCover.Rows.Count; t3++)
+                            {
+                                CoverPartDetail objCoverPartDetail = new CoverPartDetail();
+                                objCoverPartDetail.vchCoverPartDesc = SubCover.Rows[t3]["vchCoverPartDesc"].ToString();
+                                objCoverPartDetail.Status = SubCover.Rows[t3]["Status"].ToString();
+                                objCoverPartDetail.vchCoverCode = SubCover.Rows[t3]["vchCoverCode"].ToString();
+                                objListCoverPartDetails.Add(objCoverPartDetail);
+                            }
+
+
+                        }
                     }
-                   
+                    objCoverDetail.CoverPartDetails = objListCoverPartDetails;
                     listCoverDetail.Add(objCoverDetail);
                     objrequestJSON.CoverDetails = listCoverDetail;
-                    objListCoverPartDetails.Add(objCoverPartDetail);
-                    objCoverDetail.CoverPartDetails = objListCoverPartDetails;
-
                 }
-               
-
             }
+
+
             if (ds.Tables[4] != null)
             {
                 for (int t = 0; t < ds.Tables[4].Rows.Count; t++)
@@ -189,7 +190,7 @@ namespace ProductCRMAPI
                     objGroupPolicyTagging.vchPolicyNumber = ds.Tables[4].Rows[t]["vchPolicyNumber"].ToString();
                     objGroupPolicyTagging.Status = ds.Tables[4].Rows[t]["Status"].ToString();
                     objGroupPolicyTagging.Remarks = ds.Tables[4].Rows[t]["Remarks"].ToString();
-
+                    objGroupPolicyTagging.vchProductCode = ds.Tables[4].Rows[t]["vchProductCode"].ToString();
                     listGroupPolicyTagging.Add(objGroupPolicyTagging);
                     objrequestJSON.GroupPolicyTagging = listGroupPolicyTagging;
                     #endregion ProductDetail
@@ -199,85 +200,90 @@ namespace ProductCRMAPI
             if (ds.Tables[5] != null)
             {
                 List<PolicyCoverTagging> listPolicyCoverTagging = new List<PolicyCoverTagging>();
-                PolicyCoverTagging objPolicyCoverTagging = new PolicyCoverTagging();
-                List<CoverTagging> listCoverTagging= new List<CoverTagging>();
-                CoverTagging objCoverTagging=new CoverTagging();
-                List<SubCoverTagging> ListsubCoverTaggings = new List<SubCoverTagging>();
-                SubCoverTagging objsubCoverTagging=new SubCoverTagging();
+                List<CoverTagging> listCoverTagging = new List<CoverTagging>();
+
                 for (int t = 0; t < ds.Tables[5].Rows.Count; t++)
                 {
+                    PolicyCoverTagging objPolicyCoverTagging = new PolicyCoverTagging();
                     objPolicyCoverTagging.mnySumInsured = ds.Tables[5].Rows[t]["mnySumInsured"].ToString();
                     objPolicyCoverTagging.vchGroupId = ds.Tables[5].Rows[t]["vchGroupId"].ToString();
 
                     if (ds.Tables[6] != null)
                     {
-
-                        for (int t1 = 0; t1 < ds.Tables[6].Rows.Count; t1++)
+                        if (ds.Tables[5].Columns.Contains("intPolicyGroupDefId") && (ds.Tables[6].AsEnumerable().Where(r => r.Field<Int64>("intPolicyGroupDefId") == Convert.ToInt64(ds.Tables[5].Rows[t]["intPolicyGroupDefId"])).Count() > 0))
                         {
-                            objCoverTagging.vchCoverCode = ds.Tables[6].Rows[t1]["vchCoverCode"].ToString();
-                            objCoverTagging.vchLimitType = ds.Tables[6].Rows[t1]["vchLimitType"].ToString();
-                            objCoverTagging.intUnit = ds.Tables[6].Rows[t1]["intUnit"].ToString();
-                            objCoverTagging.mnyLimit = ds.Tables[6].Rows[t1]["mnyLimit"].ToString();
-                            objCoverTagging.mnyMaxLimit = ds.Tables[6].Rows[t1]["mnyMaxLimit"].ToString();
-                            objCoverTagging.intPreDays = ds.Tables[6].Rows[t1]["intPreDays"].ToString();
-                            objCoverTagging.intPostDays = ds.Tables[6].Rows[t1]["intPostDays"].ToString();
-                            objCoverTagging.fltDefaultValue = ds.Tables[6].Rows[t1]["fltDefaultValue"].ToString();
-                            objCoverTagging.vchRemarks = ds.Tables[6].Rows[t1]["vchRemarks"].ToString();
-                            objCoverTagging.Status = ds.Tables[6].Rows[t1]["Status"].ToString();
+                            DataTable PolicyCover = ds.Tables[6].AsEnumerable().Where(r => r.Field<Int64>("intPolicyGroupDefId") == Convert.ToInt64(ds.Tables[5].Rows[t]["intPolicyGroupDefId"])).CopyToDataTable();
 
-                            if (ds.Tables[7] != null)
+                            for (int t1 = 0; t1 < PolicyCover.Rows.Count; t1++)
                             {
+                                CoverTagging objCoverTagging = new CoverTagging();
+                                objCoverTagging.mnySumInsured = PolicyCover.Rows[t1]["mnySumInsured"].ToString();
+                                objCoverTagging.vchGroupId= PolicyCover.Rows[t1]["vchGroupId"].ToString();
+                                objCoverTagging.vchCoverCode = PolicyCover.Rows[t1]["vchCoverCode"].ToString();
+                                objCoverTagging.vchLimitType = PolicyCover.Rows[t1]["vchLimitType"].ToString();
+                                objCoverTagging.intUnit = PolicyCover.Rows[t1]["intUnit"].ToString();
+                                objCoverTagging.mnyLimit = PolicyCover.Rows[t1]["mnyLimit"].ToString();
+                                objCoverTagging.mnyMaxLimit = PolicyCover.Rows[t1]["mnyMaxLimit"].ToString();
+                                objCoverTagging.intPreDays = PolicyCover.Rows[t1]["intPreDays"].ToString();
+                                objCoverTagging.intPostDays = PolicyCover.Rows[t1]["intPostDays"].ToString();
+                                objCoverTagging.fltDefaultValue = PolicyCover.Rows[t1]["fltDefaultValue"].ToString();
+                                objCoverTagging.vchRemarks = PolicyCover.Rows[t1]["vchRemarks"].ToString();
+                                objCoverTagging.Status = PolicyCover.Rows[t1]["Status"].ToString();
+                                List<SubCoverTagging> ListsubCoverTaggings = new List<SubCoverTagging>();
 
-                                for (int t2 = 0; t2 < ds.Tables[7].Rows.Count; t2++)
+                                if (ds.Tables[7] != null)
                                 {
-                                    objsubCoverTagging.vchCoverType = ds.Tables[7].Rows[t2]["vchCoverType"].ToString();
-                                    objsubCoverTagging.vchCoverPartCode = ds.Tables[7].Rows[t2]["vchCoverPartCode"].ToString();
-                                    objsubCoverTagging.vchLimitType = ds.Tables[7].Rows[t2]["vchLimitType"].ToString();
-                                    objsubCoverTagging.intUnit = ds.Tables[7].Rows[t2]["intUnit"].ToString();
-                                    objsubCoverTagging.mnyLimit = ds.Tables[7].Rows[t2]["mnyLimit"].ToString();
-                                    objsubCoverTagging.mnyMaxLimit = ds.Tables[7].Rows[t2]["mnyMaxLimit"].ToString();
-                                    objsubCoverTagging.intPreDays = ds.Tables[7].Rows[t2]["intPreDays"].ToString();
-                                    objsubCoverTagging.intPostDays = ds.Tables[7].Rows[t2]["intPostDays"].ToString();
-                                    objsubCoverTagging.fltDefaultValue = ds.Tables[7].Rows[t2]["fltDefaultValue"].ToString();
-                                    objsubCoverTagging.vchRemarks = ds.Tables[7].Rows[t2]["vchRemarks"].ToString();
-                                    objsubCoverTagging.Status = ds.Tables[7].Rows[t2]["Status"].ToString();
+                                    if (ds.Tables[6].Columns.Contains("vchCoverCode") && (ds.Tables[7].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[6].Rows[t1]["vchCoverCode"].ToString()).Count() > 0))
+                                    {
+                                        DataTable PolicySubCover = ds.Tables[7].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[6].Rows[t1]["vchCoverCode"].ToString()).CopyToDataTable();
 
+                                        for (int t2 = 0; t2 < PolicySubCover.Rows.Count; t2++)
+                                        {
+                                            SubCoverTagging objsubCoverTagging = new SubCoverTagging();
+                                            objsubCoverTagging.mnySumInsured= PolicySubCover.Rows[t2]["mnySumInsured"].ToString();
+                                            objsubCoverTagging.vchGroupId= PolicySubCover.Rows[t2]["vchGroupId"].ToString();
+                                            objsubCoverTagging.vchCoverType = PolicySubCover.Rows[t2]["vchCoverType"].ToString();
+                                            objsubCoverTagging.vchCoverPartCode = PolicySubCover.Rows[t2]["vchCoverPartCode"].ToString();
+                                            objsubCoverTagging.vchLimitType = PolicySubCover.Rows[t2]["vchLimitType"].ToString();
+                                            objsubCoverTagging.intUnit = PolicySubCover.Rows[t2]["intUnit"].ToString();
+                                            objsubCoverTagging.mnyLimit = PolicySubCover.Rows[t2]["mnyLimit"].ToString();
+                                            objsubCoverTagging.mnyMaxLimit = PolicySubCover.Rows[t2]["mnyMaxLimit"].ToString();
+                                            objsubCoverTagging.intPreDays = PolicySubCover.Rows[t2]["intPreDays"].ToString();
+                                            objsubCoverTagging.intPostDays = PolicySubCover.Rows[t2]["intPostDays"].ToString();
+                                            objsubCoverTagging.fltDefaultValue = PolicySubCover.Rows[t2]["fltDefaultValue"].ToString();
+                                            objsubCoverTagging.vchRemarks = PolicySubCover.Rows[t2]["vchRemarks"].ToString();
+                                            objsubCoverTagging.Status = PolicySubCover.Rows[t2]["Status"].ToString();
+                                            ListsubCoverTaggings.Add(objsubCoverTagging);
+
+                                        }
+                                    }
+                                    
                                 }
-                                ListsubCoverTaggings.Add(objsubCoverTagging);
+                                objCoverTagging.SubCoverTagging = ListsubCoverTaggings;
+                                listCoverTagging.Add(objCoverTagging);
                             }
-                            listPolicyCoverTagging.Add(objPolicyCoverTagging);
                         }
 
+
                     }
-                    objrequestJSON.PolicyCoverTagging = listPolicyCoverTagging;
-                    listCoverTagging.Add(objCoverTagging);
-
+                    listPolicyCoverTagging.Add(objPolicyCoverTagging);
                     objPolicyCoverTagging.CoverTagging = listCoverTagging;
-                    
-                   objCoverTagging.SubCoverTagging= ListsubCoverTaggings;
-
+                    objrequestJSON.PolicyCoverTagging = listPolicyCoverTagging;                   
                 }
-
-
             }
-
             ReqJason = JsonConvert.SerializeObject(objrequestJSON);
-            
+
             string sTrResponse = "";
             sTrResponse = APIPostMethodForData(ReqJason, DataPostUrl, vchTokenNumber);
-            ApiPaymentLog(DataPostUrl,ReqJason, sTrResponse);
+            ApiPaymentLog(DataPostUrl, ReqJason, sTrResponse);
             if (sTrResponse != null)
             {
                 ResponceProduct myDeserializedClass = JsonConvert.DeserializeObject<ResponceProduct>(sTrResponse);
-               if( myDeserializedClass.OverallStatus== "Completed")
+                if (myDeserializedClass.OverallStatus == "Completed")
                 {
 
                 }
             }
-
-                //APIPostMethod(ReqJason, DataPostUrl);
-              
-
         }
         public string APIPostMethod(string Json, string url)
         {
@@ -356,9 +362,9 @@ namespace ProductCRMAPI
 
             return resultof;
         }
-        public string APIPostMethodForData(string Json, string url,string Token)
+        public string APIPostMethodForData(string Json, string url, string Token)
         {
-            string resultof = "";
+            string resultof = null;
             try
             {
                 //WriteLog(Environment.NewLine + string.Format("** inside  APIPostMethodForPayment "));
@@ -396,7 +402,7 @@ namespace ProductCRMAPI
                 webrequest.Headers.Add("app_key", "61e67f4ed7614ad822b494977444c7aa");
                 webrequest.Headers.Add("app_id", "17449a01");
                */
-                 webrequest.Headers.Add("Authorization", Token);
+                webrequest.Headers.Add("Authorization", Token);
                 // webrequest.Headers.Add("app_id", app_id);
 
                 webrequest.ContentType = "application/json";
@@ -433,6 +439,51 @@ namespace ProductCRMAPI
 
             return resultof;
         }
+
+
+
+        //public string APIPostMethodForData(string Json, string url, string Token)  //CNH Wellness Partner User Updation API
+        //{
+        //    try
+        //    {
+        //        var responseData = "";
+        //        var handler = new HttpClientHandler();
+        //        handler.UseCookies = false;
+
+        //        using (var httpClient = new HttpClient(handler))
+        //        {
+        //            using (var request = new HttpRequestMessage(new HttpMethod("POST"), url))
+        //            {
+        //                request.Headers.TryAddWithoutValidation("ContentType", "application/json");
+        //                request.Headers.TryAddWithoutValidation("Authorization", Token);
+        //                // request.Headers.TryAddWithoutValidation("app_id", app_id);
+        //                // request.Headers.TryAddWithoutValidation("app_key", app_key);
+        //                //string sTrTest = UserUpdationJSON;
+        //                request.Content = new StringContent(Json);
+        //                request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+        //                var response = httpClient.SendAsync(request).Result;
+        //                //clsLetter.WriteLog(Environment.NewLine + string.Format("***** before TokenGenerationAPI *****" + response.IsSuccessStatusCode.ToString(), "", ""));
+        //                if (response.IsSuccessStatusCode)
+        //                {
+        //                    responseData = response.Content.ReadAsStringAsync().Result;
+
+        //                    //var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
+        //                    //System.Web.Script.Serialization.JavaScriptSerializer ser = new System.Web.Script.Serialization.JavaScriptSerializer();
+        //                    //UserUpdationAPIResponseData CNHUserUpdationObj = ser.Deserialize<UserUpdationAPIResponseData>(responseData);
+        //                    //return CNHUserUpdationObj;
+        //                    return Convert.ToString(responseData);
+        //                }
+        //                return null;
+        //            }
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // clsLetter.WriteLog(Environment.NewLine + string.Format("** Setup 05 :for CNHUser Creation API Method " + ex.Message.ToString(), //ex.Message.ToString()));
+        //    }
+        //    return null;
+
+        //}
 
         public void ApiPaymentLog(string VchUrl, string VchRequest, string VchResponse)
         {

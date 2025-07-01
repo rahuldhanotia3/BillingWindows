@@ -56,6 +56,7 @@ namespace ProductCRMAPI.Entities
         public string vchPolicyNumber { get; set; }
         public string Status { get; set; }
         public string Remarks { get; set; }
+        public string vchProductCode { get; set; }
     }
     public class PolicyCoverTagging
     {
@@ -72,6 +73,8 @@ namespace ProductCRMAPI.Entities
 
     public class CoverTagging
     {
+        public string mnySumInsured { get; set; }
+        public string vchGroupId { get; set; }  
         public string vchCoverCode { get; set; }
         public string vchLimitType { get; set; }
         public string intUnit { get; set; }
@@ -87,6 +90,8 @@ namespace ProductCRMAPI.Entities
 
     public class SubCoverTagging
     {
+        public string mnySumInsured { get; set; }
+        public string vchGroupId { get; set; }
         public string vchCoverType { get; set; }
         public string vchCoverPartCode { get; set; }
         public string vchLimitType { get; set; }

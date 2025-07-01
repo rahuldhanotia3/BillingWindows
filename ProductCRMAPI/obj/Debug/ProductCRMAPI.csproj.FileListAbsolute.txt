@@ -10,3 +10,16 @@ C:\Rupesh\GitProjects\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductCRMAPI.pd
 C:\Rupesh\GitProjects\UAT\ProductCRMAPI\ProductCRMAPI\bin\Debug\Newtonsoft.Json.dll
 C:\Rupesh\GitProjects\UAT\ProductCRMAPI\ProductCRMAPI\bin\Debug\Newtonsoft.Json.xml
 C:\Rupesh\GitProjects\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductC.1375DD02.Up2Date
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\bin\Debug\ProductCRMAPI.exe.config
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\bin\Debug\ProductCRMAPI.exe
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\bin\Debug\ProductCRMAPI.pdb
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\bin\Debug\Newtonsoft.Json.dll
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\bin\Debug\Newtonsoft.Json.xml
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductCRMAPI.csproj.AssemblyReference.cache
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductCRMAPI.Form1.resources
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductCRMAPI.Properties.Resources.resources
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductCRMAPI.csproj.GenerateResource.cache
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductCRMAPI.csproj.CoreCompileInputs.cache
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductC.1375DD02.Up2Date
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductCRMAPI.exe
+C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductCRMAPI.pdb
