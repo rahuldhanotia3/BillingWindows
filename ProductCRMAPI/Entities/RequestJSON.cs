@@ -63,6 +63,7 @@ namespace ProductCRMAPI.Entities
         public string mnySumInsured { get; set; }
         public string vchGroupId { get; set; }
         public List<CoverTagging> CoverTagging { get; set; }
+        public List<RoomExpenseTagging> RoomExpenseTagging { get; set; }
     }
     public class CoverPartDetail
     {
@@ -70,11 +71,10 @@ namespace ProductCRMAPI.Entities
         public string Status { get; set; }
         public string vchCoverCode { get; set; }
     }
-
     public class CoverTagging
     {
         public string mnySumInsured { get; set; }
-        public string vchGroupId { get; set; }  
+        public string vchGroupId { get; set; }
         public string vchCoverCode { get; set; }
         public string vchLimitType { get; set; }
         public string intUnit { get; set; }
@@ -88,6 +88,16 @@ namespace ProductCRMAPI.Entities
         public List<SubCoverTagging> SubCoverTagging { get; set; }
     }
 
+    public class RoomExpenseTagging
+    {
+        public bool isRoomExpenseAvailable { get; set; }
+        public string mnySumInsured { get; set; }
+        public string vchGroupId { get; set; }
+        public string vchRoomType { get; set; }
+        public string vchVolumeType { get; set; }
+        public string mnyVolumneLimit { get; set; }
+        public string mnyUpto { get; set; }
+    }
     public class SubCoverTagging
     {
         public string mnySumInsured { get; set; }
@@ -104,6 +114,7 @@ namespace ProductCRMAPI.Entities
         public string vchRemarks { get; set; }
         public string Status { get; set; }
     }
+
     public class AuthApiResp
     {
         public string status { get; set; }
