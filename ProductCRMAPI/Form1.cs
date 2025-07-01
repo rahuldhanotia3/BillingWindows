@@ -218,7 +218,7 @@ namespace ProductCRMAPI
                             {
                                 CoverTagging objCoverTagging = new CoverTagging();
                                 objCoverTagging.mnySumInsured = PolicyCover.Rows[t1]["mnySumInsured"].ToString();
-                                objCoverTagging.vchGroupId= PolicyCover.Rows[t1]["vchGroupId"].ToString();
+                                objCoverTagging.vchGroupId = PolicyCover.Rows[t1]["vchGroupId"].ToString();
                                 objCoverTagging.vchCoverCode = PolicyCover.Rows[t1]["vchCoverCode"].ToString();
                                 objCoverTagging.vchLimitType = PolicyCover.Rows[t1]["vchLimitType"].ToString();
                                 objCoverTagging.intUnit = PolicyCover.Rows[t1]["intUnit"].ToString();
@@ -240,8 +240,8 @@ namespace ProductCRMAPI
                                         for (int t2 = 0; t2 < PolicySubCover.Rows.Count; t2++)
                                         {
                                             SubCoverTagging objsubCoverTagging = new SubCoverTagging();
-                                            objsubCoverTagging.mnySumInsured= PolicySubCover.Rows[t2]["mnySumInsured"].ToString();
-                                            objsubCoverTagging.vchGroupId= PolicySubCover.Rows[t2]["vchGroupId"].ToString();
+                                            objsubCoverTagging.mnySumInsured = PolicySubCover.Rows[t2]["mnySumInsured"].ToString();
+                                            objsubCoverTagging.vchGroupId = PolicySubCover.Rows[t2]["vchGroupId"].ToString();
                                             objsubCoverTagging.vchCoverType = PolicySubCover.Rows[t2]["vchCoverType"].ToString();
                                             objsubCoverTagging.vchCoverPartCode = PolicySubCover.Rows[t2]["vchCoverPartCode"].ToString();
                                             objsubCoverTagging.vchLimitType = PolicySubCover.Rows[t2]["vchLimitType"].ToString();
@@ -257,7 +257,7 @@ namespace ProductCRMAPI
 
                                         }
                                     }
-                                    
+
                                 }
                                 objCoverTagging.SubCoverTagging = ListsubCoverTaggings;
                                 listCoverTagging.Add(objCoverTagging);
@@ -266,24 +266,46 @@ namespace ProductCRMAPI
 
 
                     }
+                    RoomExpenseTagging objroomExpenseTagging = new RoomExpenseTagging();
+                    List<RoomExpenseTagging> lstroomExpenseTaggings = new List<RoomExpenseTagging>();
+                    if (ds.Tables[8] != null)
+                    {
+
+                        for (int t3 = 0; t3 < ds.Tables[8].Rows.Count; t3++)
+                        {
+
+                            objroomExpenseTagging.isRoomExpenseAvailable = Convert.ToBoolean(ds.Tables[8].Rows[t3]["isRoomExpenseAvailable"]);
+                            objroomExpenseTagging.mnySumInsured = ds.Tables[8].Rows[t3]["mnySumInsured"].ToString();
+                            objroomExpenseTagging.vchGroupId = ds.Tables[8].Rows[t3]["vchGroupId"].ToString();
+                            objroomExpenseTagging.vchRoomType = ds.Tables[8].Rows[t3]["vchRoomType"].ToString();
+                            objroomExpenseTagging.vchVolumeType = ds.Tables[8].Rows[t3]["vchVolumeType"].ToString();
+                            objroomExpenseTagging.mnyVolumneLimit = ds.Tables[8].Rows[t3]["mnyVolumneLimit"].ToString();
+                            objroomExpenseTagging.mnyUpto = ds.Tables[8].Rows[t3]["mnyUpto"].ToString();
+                        }
+                        lstroomExpenseTaggings.Add(objroomExpenseTagging);
+                    }
+
                     listPolicyCoverTagging.Add(objPolicyCoverTagging);
                     objPolicyCoverTagging.CoverTagging = listCoverTagging;
-                    objrequestJSON.PolicyCoverTagging = listPolicyCoverTagging;                   
+                    objPolicyCoverTagging.RoomExpenseTagging = lstroomExpenseTaggings;
+                    objrequestJSON.PolicyCoverTagging = listPolicyCoverTagging;
                 }
-            }
-            ReqJason = JsonConvert.SerializeObject(objrequestJSON);
 
-            string sTrResponse = "";
-            sTrResponse = APIPostMethodForData(ReqJason, DataPostUrl, vchTokenNumber);
-            ApiPaymentLog(DataPostUrl, ReqJason, sTrResponse);
-            if (sTrResponse != null)
-            {
-                ResponceProduct myDeserializedClass = JsonConvert.DeserializeObject<ResponceProduct>(sTrResponse);
-                if (myDeserializedClass.OverallStatus == "Completed")
+                ReqJason = JsonConvert.SerializeObject(objrequestJSON);
+
+                string sTrResponse = "";
+                sTrResponse = APIPostMethodForData(ReqJason, DataPostUrl, vchTokenNumber);
+                ApiPaymentLog(DataPostUrl, ReqJason, sTrResponse);
+                if (sTrResponse != null)
                 {
+                    ResponceProduct myDeserializedClass = JsonConvert.DeserializeObject<ResponceProduct>(sTrResponse);
+                    if (myDeserializedClass.OverallStatus == "Completed")
+                    {
 
+                    }
                 }
             }
+
         }
         public string APIPostMethod(string Json, string url)
         {
@@ -439,52 +461,6 @@ namespace ProductCRMAPI
 
             return resultof;
         }
-
-
-
-        //public string APIPostMethodForData(string Json, string url, string Token)  //CNH Wellness Partner User Updation API
-        //{
-        //    try
-        //    {
-        //        var responseData = "";
-        //        var handler = new HttpClientHandler();
-        //        handler.UseCookies = false;
-
-        //        using (var httpClient = new HttpClient(handler))
-        //        {
-        //            using (var request = new HttpRequestMessage(new HttpMethod("POST"), url))
-        //            {
-        //                request.Headers.TryAddWithoutValidation("ContentType", "application/json");
-        //                request.Headers.TryAddWithoutValidation("Authorization", Token);
-        //                // request.Headers.TryAddWithoutValidation("app_id", app_id);
-        //                // request.Headers.TryAddWithoutValidation("app_key", app_key);
-        //                //string sTrTest = UserUpdationJSON;
-        //                request.Content = new StringContent(Json);
-        //                request.Content.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-        //                var response = httpClient.SendAsync(request).Result;
-        //                //clsLetter.WriteLog(Environment.NewLine + string.Format("***** before TokenGenerationAPI *****" + response.IsSuccessStatusCode.ToString(), "", ""));
-        //                if (response.IsSuccessStatusCode)
-        //                {
-        //                    responseData = response.Content.ReadAsStringAsync().Result;
-
-        //                    //var serializer = new System.Web.Script.Serialization.JavaScriptSerializer();
-        //                    //System.Web.Script.Serialization.JavaScriptSerializer ser = new System.Web.Script.Serialization.JavaScriptSerializer();
-        //                    //UserUpdationAPIResponseData CNHUserUpdationObj = ser.Deserialize<UserUpdationAPIResponseData>(responseData);
-        //                    //return CNHUserUpdationObj;
-        //                    return Convert.ToString(responseData);
-        //                }
-        //                return null;
-        //            }
-        //        }
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        // clsLetter.WriteLog(Environment.NewLine + string.Format("** Setup 05 :for CNHUser Creation API Method " + ex.Message.ToString(), //ex.Message.ToString()));
-        //    }
-        //    return null;
-
-        //}
-
         public void ApiPaymentLog(string VchUrl, string VchRequest, string VchResponse)
         {
             ParametersEntity objDash = new ParametersEntity();
