@@ -85,6 +85,7 @@ namespace ProductCRMAPI.Entities
         public string fltDefaultValue { get; set; }
         public string vchRemarks { get; set; }
         public string Status { get; set; }
+        public string vchCoverType { get; set; }
         public List<SubCoverTagging> SubCoverTagging { get; set; }
     }
 
