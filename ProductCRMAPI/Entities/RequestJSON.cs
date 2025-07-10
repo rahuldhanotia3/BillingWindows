@@ -86,6 +86,7 @@ namespace ProductCRMAPI.Entities
         public string vchRemarks { get; set; }
         public string Status { get; set; }
         public string vchCoverType { get; set; }
+        public string vchProductCode { get; set; }
         public List<SubCoverTagging> SubCoverTagging { get; set; }
     }
 

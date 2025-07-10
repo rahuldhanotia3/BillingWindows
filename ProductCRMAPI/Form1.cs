@@ -230,6 +230,7 @@ namespace ProductCRMAPI
                                 objCoverTagging.vchRemarks = PolicyCover.Rows[t1]["vchRemarks"].ToString();
                                 objCoverTagging.Status = PolicyCover.Rows[t1]["Status"].ToString();
                                 objCoverTagging.vchCoverType = PolicyCover.Rows[t1]["vchCoverType"].ToString(); 
+                                objCoverTagging.vchProductCode= PolicyCover.Rows[t1]["vchProductCode"].ToString();
                                 List<SubCoverTagging> ListsubCoverTaggings = new List<SubCoverTagging>();
 
                                 if (ds.Tables[7] != null)
