@@ -182,19 +182,22 @@ namespace ProductCRMAPI
 
             if (ds.Tables[4] != null)
             {
+                List<GroupPolicyTagging> listGroupPolicyTagging = new List<GroupPolicyTagging>();
+               
                 for (int t = 0; t < ds.Tables[4].Rows.Count; t++)
                 {
+
                     #region ProductDetail
-                    List<GroupPolicyTagging> listGroupPolicyTagging = new List<GroupPolicyTagging>();
                     GroupPolicyTagging objGroupPolicyTagging = new GroupPolicyTagging();
                     objGroupPolicyTagging.vchPolicyNumber = ds.Tables[4].Rows[t]["vchPolicyNumber"].ToString();
                     objGroupPolicyTagging.Status = ds.Tables[4].Rows[t]["Status"].ToString();
                     objGroupPolicyTagging.Remarks = ds.Tables[4].Rows[t]["Remarks"].ToString();
                     objGroupPolicyTagging.vchProductCode = ds.Tables[4].Rows[t]["vchProductCode"].ToString();
                     listGroupPolicyTagging.Add(objGroupPolicyTagging);
-                    objrequestJSON.GroupPolicyTagging = listGroupPolicyTagging;
+                    
                     #endregion ProductDetail
                 }
+                objrequestJSON.GroupPolicyTagging = listGroupPolicyTagging;
 
             }
             if (ds.Tables[5] != null)
