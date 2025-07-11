@@ -55,7 +55,7 @@ namespace ProductCRMAPI
                         string sTrResponse = string.Empty;
                         // ApiPaymentLog(AuthTokenAPIUrl, AuthReqJason,"");
                         sTrResponse = APIPostMethod(AuthReqJason, AuthTokenAPIUrl);
-                        ApiPaymentLog(AuthTokenAPIUrl, AuthReqJason, sTrResponse);
+                        ApiPaymentLog(AuthTokenAPIUrl, AuthReqJason, sTrResponse, Policyno);
                         if (sTrResponse != null)
                         {
                             AuthApiResp myDeserializedClass = JsonConvert.DeserializeObject<AuthApiResp>(sTrResponse);
@@ -297,7 +297,7 @@ namespace ProductCRMAPI
 
                 string sTrResponse = "";
                 sTrResponse = APIPostMethodForData(ReqJason, DataPostUrl, vchTokenNumber);
-                ApiPaymentLog(DataPostUrl, ReqJason, sTrResponse);
+                ApiPaymentLog(DataPostUrl, ReqJason, sTrResponse, Policyno);
                 if (sTrResponse != null)
                 {
                     ResponceProduct myDeserializedClass = JsonConvert.DeserializeObject<ResponceProduct>(sTrResponse);
@@ -463,12 +463,13 @@ namespace ProductCRMAPI
 
             return resultof;
         }
-        public void ApiPaymentLog(string VchUrl, string VchRequest, string VchResponse)
+        public void ApiPaymentLog(string VchUrl, string VchRequest, string VchResponse,string Vchpolicynumber)
         {
             ParametersEntity objDash = new ParametersEntity();
             objDash.VchUrl = VchUrl;
             objDash.VchRequest = VchRequest;
             objDash.VchResponse = VchResponse;
+            objDash.Policyno = Vchpolicynumber;
             DataSet ds = new DataSet();
             ds = OblDALIintegration.APILog(objDash);
             if (ds.Tables[0] != null)

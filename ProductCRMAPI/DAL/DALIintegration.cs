@@ -28,6 +28,7 @@ namespace ProductCRMAPI.DAL
             Param[1] = new SqlParameter("@VchUrl", obj.VchUrl);
             Param[2] = new SqlParameter("@VchRequest", obj.VchRequest);
             Param[3] = new SqlParameter("@VchResponse", obj.VchResponse);
+            Param[4] = new SqlParameter("@VchPolicynumber", obj.Policyno);
             return SqlHelper.ExecuteDataset(SqlHelper.ConnectionString, CommandType.StoredProcedure, "usp_ProductCRMApiLog", Param);
         }
     }
