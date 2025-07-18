@@ -114,11 +114,10 @@ namespace ProductCRMAPI
             }
             if (ds.Tables[1] != null)
             {
+                List<ProductDetail> listproductDetails = new List<ProductDetail>();
                 for (int t = 0; t < ds.Tables[1].Rows.Count; t++)
                 {
                     #region ProductDetail
-                    List<ProductDetail> listproductDetails = new List<ProductDetail>();
-
                     ProductDetail objProductDetail = new ProductDetail();
                     objProductDetail.vchPolicyType = ds.Tables[1].Rows[t]["vchPolicyType"].ToString();
                     objProductDetail.vchProductName = ds.Tables[1].Rows[t]["vchProductName"].ToString();
@@ -130,9 +129,10 @@ namespace ProductCRMAPI
                     objProductDetail.Status = ds.Tables[1].Rows[t]["Status"].ToString();
                     objProductDetail.Remarks = ds.Tables[1].Rows[t]["Remarks"].ToString();
                     listproductDetails.Add(objProductDetail);
-                    objrequestJSON.ProductDetails = listproductDetails;
                     #endregion ProductDetail
                 }
+               
+                objrequestJSON.ProductDetails = listproductDetails;
 
             }
             if (ds.Tables[2] != null)
@@ -153,6 +153,7 @@ namespace ProductCRMAPI
                     objCoverDetail.mnyMaxLimit = ds.Tables[2].Rows[t]["mnyMaxLimit"].ToString();
                     objCoverDetail.Status = ds.Tables[2].Rows[t]["Status"].ToString();
                     objCoverDetail.Remarks = ds.Tables[2].Rows[t]["Remarks"].ToString();
+                    objCoverDetail.vchProductCode= ds.Tables[2].Rows[t]["vchProductCode"].ToString();
                     List<CoverPartDetail> objListCoverPartDetails = new List<CoverPartDetail>();
                     #endregion CoverDetails
                     if (ds.Tables[3] != null)

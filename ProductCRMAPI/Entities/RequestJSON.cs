@@ -49,6 +49,7 @@ namespace ProductCRMAPI.Entities
         public string mnyMaxLimit { get; set; }
         public string Status { get; set; }
         public string Remarks { get; set; }
+        public string vchProductCode { get; set; }
         public List<CoverPartDetail> CoverPartDetails { get; set; }
     }
     public class GroupPolicyTagging
