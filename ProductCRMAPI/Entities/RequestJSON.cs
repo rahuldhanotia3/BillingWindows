@@ -35,6 +35,7 @@ namespace ProductCRMAPI.Entities
         public string mnyMaxLimit { get; set; }
         public string Status { get; set; }
         public string Remarks { get; set; }
+        public string vchLobCode { get; set; }
     }
     public class CoverDetail
     {

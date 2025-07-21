@@ -92,14 +92,14 @@ namespace ProductCRMAPI
             ds = OblDALIintegration.GetMasterPolicyList(objParametersEntity);
             if (ds.Tables[0] != null)
             {
+                List<LineOfBusinessDetail> listLineOfBusinessDetail = new List<LineOfBusinessDetail>();
                 for (int t = 0; t < ds.Tables[0].Rows.Count; t++)
                 {
 
                     #region vchTokenNumber
                     objrequestJSON.vchTokenNumber = vchTokenNumber;
                     #endregion
-                    #region LineOfBusinessDetail
-                    List<LineOfBusinessDetail> listLineOfBusinessDetail = new List<LineOfBusinessDetail>();
+                    #region LineOfBusinessDetail                
                     LineOfBusinessDetail objLineOfBusinessDetail = new LineOfBusinessDetail();
                     objLineOfBusinessDetail.vchLobCode = ds.Tables[0].Rows[t]["vchLobCode"].ToString();
                     objLineOfBusinessDetail.vchLob = ds.Tables[0].Rows[t]["vchLob"].ToString();
@@ -128,6 +128,7 @@ namespace ProductCRMAPI
                     objProductDetail.mnyMaxLimit = ds.Tables[1].Rows[t]["mnyMaxLimit"].ToString();
                     objProductDetail.Status = ds.Tables[1].Rows[t]["Status"].ToString();
                     objProductDetail.Remarks = ds.Tables[1].Rows[t]["Remarks"].ToString();
+                    objProductDetail.vchLobCode = ds.Tables[1].Rows[t]["vchLOBCode"].ToString();
                     listproductDetails.Add(objProductDetail);
                     #endregion ProductDetail
                 }
