@@ -132,7 +132,7 @@ namespace ProductCRMAPI
                     listproductDetails.Add(objProductDetail);
                     #endregion ProductDetail
                 }
-               
+
                 objrequestJSON.ProductDetails = listproductDetails;
 
             }
@@ -154,7 +154,7 @@ namespace ProductCRMAPI
                     objCoverDetail.mnyMaxLimit = ds.Tables[2].Rows[t]["mnyMaxLimit"].ToString();
                     objCoverDetail.Status = ds.Tables[2].Rows[t]["Status"].ToString();
                     objCoverDetail.Remarks = ds.Tables[2].Rows[t]["Remarks"].ToString();
-                    objCoverDetail.vchProductCode= ds.Tables[2].Rows[t]["vchProductCode"].ToString();
+                    objCoverDetail.vchProductCode = ds.Tables[2].Rows[t]["vchProductCode"].ToString();
                     List<CoverPartDetail> objListCoverPartDetails = new List<CoverPartDetail>();
                     #endregion CoverDetails
                     if (ds.Tables[3] != null)
@@ -185,7 +185,7 @@ namespace ProductCRMAPI
             if (ds.Tables[4] != null)
             {
                 List<GroupPolicyTagging> listGroupPolicyTagging = new List<GroupPolicyTagging>();
-               
+
                 for (int t = 0; t < ds.Tables[4].Rows.Count; t++)
                 {
 
@@ -196,7 +196,7 @@ namespace ProductCRMAPI
                     objGroupPolicyTagging.Remarks = ds.Tables[4].Rows[t]["Remarks"].ToString();
                     objGroupPolicyTagging.vchProductCode = ds.Tables[4].Rows[t]["vchProductCode"].ToString();
                     listGroupPolicyTagging.Add(objGroupPolicyTagging);
-                    
+
                     #endregion ProductDetail
                 }
                 objrequestJSON.GroupPolicyTagging = listGroupPolicyTagging;
@@ -205,10 +205,12 @@ namespace ProductCRMAPI
             if (ds.Tables[5] != null)
             {
                 List<PolicyCoverTagging> listPolicyCoverTagging = new List<PolicyCoverTagging>();
-                List<CoverTagging> listCoverTagging = new List<CoverTagging>();
+
 
                 for (int t = 0; t < ds.Tables[5].Rows.Count; t++)
                 {
+                    List<CoverTagging> listCoverTagging = new List<CoverTagging>();
+
                     PolicyCoverTagging objPolicyCoverTagging = new PolicyCoverTagging();
                     objPolicyCoverTagging.mnySumInsured = ds.Tables[5].Rows[t]["mnySumInsured"].ToString();
                     objPolicyCoverTagging.vchGroupId = ds.Tables[5].Rows[t]["vchGroupId"].ToString();
@@ -234,18 +236,25 @@ namespace ProductCRMAPI
                                 objCoverTagging.fltDefaultValue = PolicyCover.Rows[t1]["fltDefaultValue"].ToString();
                                 objCoverTagging.vchRemarks = PolicyCover.Rows[t1]["vchRemarks"].ToString();
                                 objCoverTagging.Status = PolicyCover.Rows[t1]["Status"].ToString();
-                                objCoverTagging.vchCoverType = PolicyCover.Rows[t1]["vchCoverType"].ToString(); 
-                                objCoverTagging.vchProductCode= PolicyCover.Rows[t1]["vchProductCode"].ToString();
-                                List<SubCoverTagging> ListsubCoverTaggings = new List<SubCoverTagging>();
+                                objCoverTagging.vchCoverType = PolicyCover.Rows[t1]["vchCoverType"].ToString();
+                                objCoverTagging.vchProductCode = PolicyCover.Rows[t1]["vchProductCode"].ToString();
+
 
                                 if (ds.Tables[7] != null)
                                 {
-                                    if (ds.Tables[6].Columns.Contains("vchCoverCode") && (ds.Tables[7].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[6].Rows[t1]["vchCoverCode"].ToString()).Count() > 0))
+                                    List<SubCoverTagging> ListsubCoverTaggings = new List<SubCoverTagging>();
+                                    if (ds.Tables[6].Columns.Contains("vchCoverCode") && (ds.Tables[7].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[6].Rows[t1]["vchCoverCode"].ToString()
+                                    && r.Field<string>("vchGroupId") == PolicyCover.Rows[t1]["vchGroupId"].ToString()
+                                    ).Count() > 0))
                                     {
-                                        DataTable PolicySubCover = ds.Tables[7].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[6].Rows[t1]["vchCoverCode"].ToString()).CopyToDataTable();
+                                        DataTable PolicySubCover = ds.Tables[7].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[6].Rows[t1]["vchCoverCode"].ToString()
+                                        &&
+                                        r.Field<string>("vchGroupId") == ds.Tables[5].Rows[t]["vchGroupId"].ToString()
+                                        ).CopyToDataTable();
 
                                         for (int t2 = 0; t2 < PolicySubCover.Rows.Count; t2++)
                                         {
+
                                             SubCoverTagging objsubCoverTagging = new SubCoverTagging();
                                             objsubCoverTagging.mnySumInsured = PolicySubCover.Rows[t2]["mnySumInsured"].ToString();
                                             objsubCoverTagging.vchGroupId = PolicySubCover.Rows[t2]["vchGroupId"].ToString();
@@ -261,13 +270,15 @@ namespace ProductCRMAPI
                                             objsubCoverTagging.vchRemarks = PolicySubCover.Rows[t2]["vchRemarks"].ToString();
                                             objsubCoverTagging.Status = PolicySubCover.Rows[t2]["Status"].ToString();
                                             ListsubCoverTaggings.Add(objsubCoverTagging);
-
+                                            objCoverTagging.SubCoverTagging = ListsubCoverTaggings;
                                         }
+
                                     }
 
                                 }
-                                objCoverTagging.SubCoverTagging = ListsubCoverTaggings;
+
                                 listCoverTagging.Add(objCoverTagging);
+
                             }
                         }
 
@@ -468,7 +479,7 @@ namespace ProductCRMAPI
 
             return resultof;
         }
-        public void ApiPaymentLog(string VchUrl, string VchRequest, string VchResponse,string Vchpolicynumber)
+        public void ApiPaymentLog(string VchUrl, string VchRequest, string VchResponse, string Vchpolicynumber)
         {
             ParametersEntity objDash = new ParametersEntity();
             objDash.VchUrl = VchUrl;
