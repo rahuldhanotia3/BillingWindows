@@ -169,6 +169,7 @@ namespace ProductCRMAPI
                                 objCoverPartDetail.vchCoverPartDesc = SubCover.Rows[t3]["vchCoverPartDesc"].ToString();
                                 objCoverPartDetail.Status = SubCover.Rows[t3]["Status"].ToString();
                                 objCoverPartDetail.vchCoverCode = SubCover.Rows[t3]["vchCoverCode"].ToString();
+                                objCoverPartDetail.vchCoverPartCode = SubCover.Rows[t3]["vchCoverPartCode"].ToString();
                                 objListCoverPartDetails.Add(objCoverPartDetail);
                             }
 
