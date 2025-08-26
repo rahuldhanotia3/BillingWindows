@@ -73,6 +73,7 @@ namespace ProductCRMAPI.Entities
         public string Status { get; set; }
         public string vchCoverCode { get; set; }
         public string vchCoverPartCode { get; set; }
+        public string vchProductCode { get; set; }
     }
     public class CoverTagging
     {
