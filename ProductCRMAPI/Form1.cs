@@ -33,10 +33,13 @@ namespace ProductCRMAPI
         public Form1()
         {
             InitializeComponent();
-            GetPolicyList();
-            Application.Exit();
+            this.Load += Form1_Load;
         }
-
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            GetPolicyList(); 
+            this.Close();
+        }
         void GetPolicyList()
         {
             try

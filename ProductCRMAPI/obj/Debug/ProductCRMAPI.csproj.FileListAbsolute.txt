@@ -23,3 +23,17 @@ C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Deb
 C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductC.1375DD02.Up2Date
 C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductCRMAPI.exe
 C:\Old Backup data\Deepu\Git Application\UAT\ProductCRMAPI\ProductCRMAPI\obj\Debug\ProductCRMAPI.pdb
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\bin\Debug\ProductCRMAPI.exe.config
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\bin\Debug\ProductCRMAPI.exe
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\bin\Debug\ProductCRMAPI.pdb
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\bin\Debug\Newtonsoft.Json.dll
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\bin\Debug\Newtonsoft.Json.xml
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\obj\Debug\ProductCRMAPI.csproj.AssemblyReference.cache
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\obj\Debug\ProductCRMAPI.exe.config
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\obj\Debug\ProductCRMAPI.Form1.resources
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\obj\Debug\ProductCRMAPI.Properties.Resources.resources
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\obj\Debug\ProductCRMAPI.csproj.GenerateResource.cache
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\obj\Debug\ProductCRMAPI.csproj.CoreCompileInputs.cache
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\obj\Debug\ProductC.1375DD02.Up2Date
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\obj\Debug\ProductCRMAPI.exe
+C:\Users\G42055\Downloads\product_crm_api\ProductCRMAPI\obj\Debug\ProductCRMAPI.pdb
