@@ -14,7 +14,7 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                echo "Starting Build for TPAEurop..."
+                echo "Starting Build for ProductCRMAPI..."
                 powershell """
                     git config --global --add safe.directory "${env.WORKSPACE}"
                     
