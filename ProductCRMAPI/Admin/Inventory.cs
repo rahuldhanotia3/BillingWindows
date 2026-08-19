@@ -67,7 +67,8 @@ namespace ProductCRMAPI
                         sheet.Cells[row, 4].Text,
                         sheet.Cells[row, 5].Text,
                         sheet.Cells[row, 6].Text,
-                        sheet.Cells[row, 7].Text
+                        sheet.Cells[row, 7].Text,
+                        sheet.Cells[row, 8].Text
                     );
                 }
             }
@@ -88,13 +89,14 @@ namespace ProductCRMAPI
             {
                 var sheet = package.Workbook.Worksheets.Add("Inventory");
 
-                sheet.Cells[1, 1].Value = "ItemName";
-                sheet.Cells[1, 2].Value = "HSN";
-                sheet.Cells[1, 3].Value = "Unit";
-                sheet.Cells[1, 4].Value = "Qty";
-                sheet.Cells[1, 5].Value = "PurchasePrice";
-                sheet.Cells[1, 6].Value = "SalePrice";
-                sheet.Cells[1, 7].Value = "GST";
+                sheet.Cells[1, 1].Value = "SNO";
+                sheet.Cells[1, 2].Value = "ItemName";
+                sheet.Cells[1, 3].Value = "HSN";
+                sheet.Cells[1, 4].Value = "Unit";
+                sheet.Cells[1, 5].Value = "Qty";
+                sheet.Cells[1, 6].Value = "PurchasePrice";
+                sheet.Cells[1, 7].Value = "SalePrice";
+                sheet.Cells[1, 8].Value = "GST";
 
                 package.SaveAs(new FileInfo(excelFile));
             }
@@ -113,13 +115,14 @@ namespace ProductCRMAPI
                 int lastRow = sheet.Dimension?.Rows ?? 1;
                 int nextRow = lastRow + 1;
 
-                sheet.Cells[nextRow, 1].Value = txtItemName.Text;
-                sheet.Cells[nextRow, 2].Value = txtHsn.Text;
-                sheet.Cells[nextRow, 3].Value = txtunit.Text;
-                sheet.Cells[nextRow, 4].Value = txtQuantity.Text;
-                sheet.Cells[nextRow, 5].Value = txtPPrice.Text;
-                sheet.Cells[nextRow, 6].Value = txtSPrice.Text;
-                sheet.Cells[nextRow, 7].Value = textGst.Text;
+                sheet.Cells[nextRow, 1].Value = nextRow;
+                sheet.Cells[nextRow, 2].Value = txtItemName.Text;
+                sheet.Cells[nextRow, 3].Value = txtHsn.Text;
+                sheet.Cells[nextRow, 4].Value = txtunit.Text;
+                sheet.Cells[nextRow, 5].Value = txtQuantity.Text;
+                sheet.Cells[nextRow, 6].Value = txtPPrice.Text;
+                sheet.Cells[nextRow, 7].Value = txtSPrice.Text;
+                sheet.Cells[nextRow, 8].Value = textGst.Text;
 
                 package.Save();
             }
@@ -140,14 +143,15 @@ namespace ProductCRMAPI
 
                 for (int i = 2; i <= rows; i++)
                 {
-                    if (sheet.Cells[i, 1].Text == txtItemName.Text)
+                    if (sheet.Cells[i, 1].Text == txtSNO.Text)
                     {
-                        sheet.Cells[i, 2].Value = txtHsn.Text;
-                        sheet.Cells[i, 3].Value = txtunit.Text;
-                        sheet.Cells[i, 4].Value = txtQuantity.Text;
-                        sheet.Cells[i, 5].Value = txtPPrice.Text;
-                        sheet.Cells[i, 6].Value = txtSPrice.Text;
-                        sheet.Cells[i, 7].Value = textGst.Text;
+                        sheet.Cells[i, 2].Value = txtItemName.Text;
+                        sheet.Cells[i, 3].Value = txtHsn.Text;
+                        sheet.Cells[i, 4].Value = txtunit.Text;
+                        sheet.Cells[i, 5].Value = txtQuantity.Text;
+                        sheet.Cells[i, 6].Value = txtPPrice.Text;
+                        sheet.Cells[i, 7].Value = txtSPrice.Text;
+                        sheet.Cells[i, 8].Value = textGst.Text;
 
                         package.Save();
 
@@ -171,15 +175,16 @@ namespace ProductCRMAPI
 
                 for (int i = 2; i <= rows; i++)
                 {
-                    if (sheet.Cells[i, 1].Text == itemName)
+                    if (sheet.Cells[i, 2].Text == itemName)
                     {
-                        txtItemName.Text = sheet.Cells[i, 1].Text;
-                        txtHsn.Text = sheet.Cells[i, 2].Text;
-                        txtunit.Text = sheet.Cells[i, 3].Text;
-                        txtQuantity.Text = sheet.Cells[i, 4].Text;
-                        txtPPrice.Text = sheet.Cells[i, 5].Text;
-                        txtSPrice.Text = sheet.Cells[i, 6].Text;
-                        textGst.Text = sheet.Cells[i, 7].Text;
+                        txtSNO.Text = sheet.Cells[i, 1].Text;
+                        txtItemName.Text = sheet.Cells[i, 2].Text;
+                        txtHsn.Text = sheet.Cells[i, 3].Text;
+                        txtunit.Text = sheet.Cells[i, 4].Text;
+                        txtQuantity.Text = sheet.Cells[i, 5].Text;
+                        txtPPrice.Text = sheet.Cells[i, 6].Text;
+                        txtSPrice.Text = sheet.Cells[i, 7].Text;
+                        textGst.Text = sheet.Cells[i, 8].Text;
                         break;
                     }
                 }

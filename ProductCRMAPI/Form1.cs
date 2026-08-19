@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using OfficeOpenXml;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -36,6 +37,7 @@ namespace ProductCRMAPI
         decimal Balance = 0;
         decimal Saved = 0;
         decimal Total = 0;
+        string excelFile = @"C:\Users\G42055\Documents\Inventory.xlsx";
         public Form1()
         {
             InitializeComponent();
@@ -554,7 +556,94 @@ namespace ProductCRMAPI
 
             return words.Trim();
         }
+        private void FetchItemDetails(string itemName)
+        {
+            ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
+            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            {
+                var sheet = package.Workbook.Worksheets[0];
+
+                int rows = sheet.Dimension.Rows;
+
+                for (int i = 2; i <= rows; i++)
+                {
+                    if (sheet.Cells[i, 2].Text.ToUpper() == itemName.ToUpper())
+                    {
+                        txtSNO.Text = sheet.Cells[i, 1].Text;
+                        txtItemName.Text = sheet.Cells[i, 2].Text;
+                        txtHSN.Text = sheet.Cells[i, 3].Text;
+                        cmbUnit.SelectedItem = sheet.Cells[i, 4].Text;
+                        txtQty.Text = sheet.Cells[i, 5].Text;
+                        txtPrice.Text = sheet.Cells[i, 6].Text;
+                        //txtSPrice.Text = sheet.Cells[i, 6].Text;
+                        txtGST.Text = sheet.Cells[i, 8].Text;
+                        break;
+                    }
+                }
+            }
+        }
+        //private void txtItemName_KeyUp(object sender, KeyEventArgs e)
+        //{
+        //    FetchItemDetails(txtItemName.Text.Trim());
+        //}
+        private void txtItemName_KeyUp(object sender, KeyEventArgs e)
+        {
+            txtlistbox.Items.Clear();
+
+            string searchText = txtItemName.Text.Trim().ToLower();
+
+            if (string.IsNullOrEmpty(searchText))
+            {
+                txtlistbox.Visible = false;
+                return;
+            }
+
+            ExcelPackage.License.SetNonCommercialPersonal("Rahul");
+
+            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            {
+                var sheet = package.Workbook.Worksheets[0];
+                int rows = sheet.Dimension.Rows;
+
+                for (int i = 2; i <= rows; i++)
+                {
+                    string itemName = sheet.Cells[i, 2].Text;
+
+                    if (itemName.ToLower().Contains(searchText))
+                    {
+                        txtlistbox.Items.Add(itemName.ToUpper());
+                    }
+                }
+            }
+
+            txtlistbox.Visible = txtlistbox.Items.Count > 0;
+        }
+        private void listBoxItems_Click(object sender, EventArgs e)
+        {
+            if (txtlistbox.SelectedItem != null)
+            {
+                txtItemName.Text = txtlistbox.SelectedItem.ToString();
+
+                FetchItemDetails(txtItemName.Text.ToUpper());
+
+                txtlistbox.Visible = false;
+            }
+        }
+        private void listBoxItems_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (txtlistbox.SelectedItem != null)
+                {
+                    txtItemName.Text = txtlistbox.SelectedItem.ToString();
+
+                    FetchItemDetails(txtItemName.Text);
+
+                    txtlistbox.Visible = false;
+                }
+            }
+        }
         private void lblMainHeader_Click(object sender, EventArgs e)
         {
 

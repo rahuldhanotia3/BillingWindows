@@ -31,7 +31,7 @@ namespace ProductCRMAPI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvInventory = new System.Windows.Forms.DataGridView();
             this.ItemName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.HSN = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -61,14 +61,15 @@ namespace ProductCRMAPI
             this.textGst = new System.Windows.Forms.TextBox();
             this.btnSearch = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
+            this.txtSNO = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvInventory)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxArray1)).BeginInit();
             this.SuspendLayout();
             // 
             // dgvInventory
             // 
-            dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightGray;
-            this.dgvInventory.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.LightGray;
+            this.dgvInventory.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvInventory.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvInventory.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
@@ -401,11 +402,20 @@ namespace ProductCRMAPI
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.btnUpdate_Click);
             // 
+            // txtSNO
+            // 
+            this.txtSNO.Location = new System.Drawing.Point(957, 573);
+            this.txtSNO.Name = "txtSNO";
+            this.txtSNO.Size = new System.Drawing.Size(100, 35);
+            this.txtSNO.TabIndex = 45;
+            this.txtSNO.Visible = false;
+            // 
             // Inventory
             // 
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1787, 1044);
+            this.Controls.Add(this.txtSNO);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.textGst);
@@ -472,6 +482,7 @@ namespace ProductCRMAPI
         private System.Windows.Forms.DataGridViewTextBoxColumn SalePrice;
         private System.Windows.Forms.DataGridViewTextBoxColumn GST;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox txtSNO;
     }
 }
 

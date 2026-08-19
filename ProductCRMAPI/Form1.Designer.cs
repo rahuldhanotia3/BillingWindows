@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using Microsoft.VisualBasic.Compatibility.VB6;
+using System.Drawing;
+using System.Windows.Forms;
 
 namespace ProductCRMAPI
 {
@@ -31,7 +33,7 @@ namespace ProductCRMAPI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvItems = new System.Windows.Forms.DataGridView();
             this.textBoxArray1 = new Microsoft.VisualBasic.Compatibility.VB6.TextBoxArray(this.components);
             this.txtGSTINNumber = new System.Windows.Forms.TextBox();
@@ -69,14 +71,16 @@ namespace ProductCRMAPI
             this.button2 = new System.Windows.Forms.Button();
             this.txtInvoiceDate = new System.Windows.Forms.DateTimePicker();
             this.button3 = new System.Windows.Forms.Button();
+            this.txtSNO = new System.Windows.Forms.TextBox();
+            this.txtlistbox = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvItems)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxArray1)).BeginInit();
             this.SuspendLayout();
             // 
             // dgvItems
             // 
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.LightGray;
-            this.dgvItems.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle2.BackColor = System.Drawing.Color.LightGray;
+            this.dgvItems.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
             this.dgvItems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvItems.BackgroundColor = System.Drawing.Color.White;
@@ -215,6 +219,7 @@ namespace ProductCRMAPI
             this.txtItemName.Name = "txtItemName";
             this.txtItemName.Size = new System.Drawing.Size(340, 30);
             this.txtItemName.TabIndex = 11;
+            this.txtItemName.KeyUp += this.txtItemName_KeyUp;
             // 
             // label1
             // 
@@ -574,11 +579,44 @@ namespace ProductCRMAPI
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.btnAdmin_Click);
             // 
+            // txtSNO
+            // 
+            this.txtSNO.Location = new System.Drawing.Point(1231, 362);
+            this.txtSNO.Name = "txtSNO";
+            this.txtSNO.Size = new System.Drawing.Size(0, 35);
+            this.txtSNO.TabIndex = 41;
+            this.txtSNO.Visible = false;
+            // 
+            // txtlistbox
+            // 
+            this.txtlistbox.FormattingEnabled = true;
+            this.txtlistbox.ItemHeight = 35;
+            this.txtlistbox.Location = new System.Drawing.Point(19, 396);
+            this.txtlistbox.Name = "txtlistbox";
+            this.txtlistbox.Size = new System.Drawing.Size(340, 149);
+            this.txtlistbox.TabIndex = 42;
+            this.txtlistbox.Visible = false;
+            this.txtlistbox.MouseClick += this.listBoxItems_Click;
+            this.txtlistbox.KeyDown += this.listBoxItems_KeyDown;
+            this.txtlistbox.Visible = false;
+            this.txtlistbox.BorderStyle = BorderStyle.FixedSingle;
+            this.txtlistbox.Font = new Font("Segoe UI", 12);
+            this.txtlistbox.IntegralHeight = false;
+            this.txtlistbox.Height = 120;
+            this.txtlistbox.Left = txtItemName.Left;
+            this.txtlistbox.Top = txtItemName.Bottom + 2;
+            this.txtlistbox.Width = txtItemName.Width;
+            this.txtlistbox.BackColor = Color.White;
+            this.txtlistbox.ForeColor = ColorTranslator.FromHtml("#9B7AD9");
+
+            // 
             // Form1
             // 
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1787, 1044);
+            this.Controls.Add(this.txtlistbox);
+            this.Controls.Add(this.txtSNO);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.txtInvoiceDate);
             this.Controls.Add(this.button2);
@@ -668,6 +706,8 @@ namespace ProductCRMAPI
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.DateTimePicker txtInvoiceDate;
         private System.Windows.Forms.Button button3;
+        private TextBox txtSNO;
+        private ListBox txtlistbox;
     }
 }
 
