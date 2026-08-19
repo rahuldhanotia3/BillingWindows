@@ -1,35 +1,41 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Linq;
-using System.Net.Mail;
 using System.Net;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using ProductCRMAPI.Entities;
-using ProductCRMAPI.DAL;
+using System.Xml.Linq;
+using static QuestPDF.Helpers.Colors;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using Newtonsoft.Json;
-using System.IO;
-using System.Configuration;
-using System.Net.Http.Headers;
-using System.Net.Http;
 
 namespace ProductCRMAPI
 {
     public partial class Form1 : Form
     {
-        DALIintegration OblDALIintegration = new DALIintegration();
-        ParametersEntity objParametersEntity = new ParametersEntity();
-        RequestJSON objrequestJSON = new RequestJSON();
-        string ReqJason = "";
-        public static string AuthTokenAPIUrl { get { return ConfigurationManager.AppSettings["AuthUrl"].ToString(); } }
-        public static string AuthTokenAPIUserName { get { return ConfigurationManager.AppSettings["UserId"].ToString(); } }
-        public static string AuthTokenAPIPsw { get { return ConfigurationManager.AppSettings["Password"].ToString(); } }
-        public static string DataPostUrl { get { return ConfigurationManager.AppSettings["DataPostUrl"].ToString(); } }
+        decimal SubTotal = 0;
+        decimal TotalDiscount = 0;
+        decimal SGST25 = 0;
+        decimal CGST25 = 0;
+        decimal SGST9 = 0;
+        decimal CGST9 = 0;
+        decimal Received = 0;
+        decimal Balance = 0;
+        decimal Saved = 0;
+        decimal Total = 0;
         public Form1()
         {
             InitializeComponent();
@@ -37,467 +43,526 @@ namespace ProductCRMAPI
         }
         private void Form1_Load(object sender, EventArgs e)
         {
-            GetPolicyList(); 
-            this.Close();
+            //this.Close();
+            //InitializeInvoiceGrid();
+            txtInvoiceDate.Format = DateTimePickerFormat.Custom;
+            txtInvoiceDate.CustomFormat = "dd/MM/yyyy";
+            txtInvoiceDate.MinDate = new DateTime(1900, 1, 1);
+            txtInvoiceDate.Value = DateTime.Now;
+            txtInvoiceDate.MaxDate = DateTime.Today;
+            dgvItems.CellEndEdit += dgvItems_CellEndEdit;
+            cmbUnit.Items.AddRange(new string[]
+            {
+                "KG",
+                "LITER",
+                "NO",
+                "GRAM",
+                "METER",
+                "HOURS"
+            });
+
+            cmbUnit.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbUnit.SelectedIndex = 0;
+
+            txtQty.TextChanged += Input_TextChanged;
+            txtPrice.TextChanged += Input_TextChanged;
+            txtDiscount.TextChanged += Input_TextChanged;
+            txtGST.TextChanged += Input_TextChanged;
+
+            InitializeInvoiceGrid();
         }
-        void GetPolicyList()
+        private void InitializeInvoiceGrid()
         {
-            try
-            {
-                DataSet ds = new DataSet();
-                objParametersEntity.ProcAction = "GetPolicyList";
-                ds = OblDALIintegration.GetMasterPolicyList(objParametersEntity);
-                if (ds.Tables[0] != null)
-                {
-                    for (int t = 0; t < ds.Tables[0].Rows.Count; t++)
-                    {
-                        string Policyno = ds.Tables[0].Rows[t]["vchPolicyNumber"].ToString();
-                        string Policyinfoid = ds.Tables[0].Rows[t]["IntPolicyinfoid"].ToString();
-                        string enumIsMasterPolicy = ds.Tables[0].Rows[t]["enumIsMasterPolicy"].ToString();
-                        string AuthReqJason = "{\r\n    \"UserId\" : \"" + AuthTokenAPIUserName + "\",\r\n    \"Password\" : \"" + AuthTokenAPIPsw + "\"\r\n}";
-                        string sTrResponse = string.Empty;
-                        // ApiPaymentLog(AuthTokenAPIUrl, AuthReqJason,"");
-                        sTrResponse = APIPostMethod(AuthReqJason, AuthTokenAPIUrl);
-                        ApiPaymentLog(AuthTokenAPIUrl, AuthReqJason, sTrResponse, Policyno);
-                        if (sTrResponse != null)
-                        {
-                            AuthApiResp myDeserializedClass = JsonConvert.DeserializeObject<AuthApiResp>(sTrResponse);
-                            if (myDeserializedClass.status == "success")
-                            {
-                                string TokenNumber = myDeserializedClass.Data.TokenNumber;
-                                GetDataByPolicyInfoID(Policyno, Policyinfoid, enumIsMasterPolicy, TokenNumber);
-                            }
-                        }
+            dgvItems.Columns.Clear();
 
+            dgvItems.Columns.Add("txtItemName", "Item Name");
+            dgvItems.Columns.Add("txtHSN", "HSN/SAC");
+            dgvItems.Columns.Add("txtQty", "Quantity");
+            dgvItems.Columns.Add("txtUnit", "Unit");
+            dgvItems.Columns.Add("txtPrice", "Price/Unit");
+            dgvItems.Columns.Add("txtDiscount", "Discount %");
+            dgvItems.Columns.Add("txtGST", "GST %");
+            dgvItems.Columns.Add("txtAmount", "Amount");
 
-                    }
-
-                }
-
-            }
-            catch (Exception Ex)
-            {
-
-                //throw Ex;
-            }
-
-
+            dgvItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
-        void GetDataByPolicyInfoID(string Policyno, string Policyinfoid, string enumIsMasterPolicy, string Vchtoken)
+        private void textBox1_TextChanged(object sender, EventArgs e)
         {
-            string vchTokenNumber = Vchtoken;
-            DataSet ds = new DataSet();
-            objParametersEntity.ProcAction = "GetPolicyDataByID";
-            objParametersEntity.Policyno = Policyno;
-            objParametersEntity.Policyinfoid = Policyinfoid;
-            objParametersEntity.enumIsMasterPolicy = enumIsMasterPolicy;
-            ds = OblDALIintegration.GetMasterPolicyList(objParametersEntity);
-            if (ds.Tables[0] != null)
+
+        }
+
+        private void textBox3_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void textBox7_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtYouSaved_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void txtCGST25_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            decimal qty = Convert.ToDecimal(txtQty.Text);
+            decimal price = Convert.ToDecimal(txtPrice.Text);
+            decimal discount = Convert.ToDecimal(txtDiscount.Text);
+            decimal gst = Convert.ToDecimal(txtGST.Text);
+
+            decimal amount = qty * price;
+            amount -= amount * discount / 100;
+            decimal discountAmt = amount * discount / 100; 
+            decimal gstAmt = amount * gst / 100;
+            decimal finalAmount = amount + gstAmt;
+            txtAmount.Text = finalAmount.ToString("0.00");
+
+            dgvItems.Rows.Add(
+                txtItemName.Text,
+                txtHSN.Text,
+                qty,
+                cmbUnit.SelectedItem.ToString(),
+                price,
+                discount,
+                gst,
+                finalAmount
+            );
+
+            ClearItemFields();
+        }
+        private void CalculateAmount()
+        {
+            decimal qty = 0;
+            decimal price = 0;
+            decimal discount = 0;
+            decimal gst = 0;
+
+            decimal.TryParse(txtQty.Text, out qty);
+            decimal.TryParse(txtPrice.Text, out price);
+            decimal.TryParse(txtDiscount.Text, out discount);
+            decimal.TryParse(txtGST.Text, out gst);
+
+            decimal amount = qty * price;
+
+            decimal discountAmt = amount * discount / 100;
+            amount -= discountAmt;
+
+            decimal gstAmt = amount * gst / 100;
+            decimal finalAmount = amount + gstAmt;
+
+            //txtDiscount.Text = discountAmt.ToString("0.00");
+            txtAmount.Text = finalAmount.ToString("0.00");
+        }
+        private void Input_TextChanged(object sender, EventArgs e)
+        {
+            CalculateAmount();
+        }
+        private void ClearItemFields()
+        {
+            txtItemName.Clear();
+            txtHSN.Clear();
+            txtQty.Clear();
+            txtPrice.Clear();
+            txtDiscount.Clear();
+            txtGST.Clear();
+            txtAmount.Clear();
+        }
+        private void dgvItems_CellEndEdit(object sender,DataGridViewCellEventArgs e)
+        {
+            DataGridViewRow row = dgvItems.Rows[e.RowIndex];
+
+            decimal qty = Convert.ToDecimal(row.Cells["Qty"].Value ?? 0);
+            decimal price = Convert.ToDecimal(row.Cells["Price"].Value ?? 0);
+            decimal discount = Convert.ToDecimal(row.Cells["Discount"].Value ?? 0);
+
+            decimal amount = qty * price;
+            amount -= amount * discount / 100;
+
+            row.Cells["Amount"].Value = amount.ToString("0.00");
+        }
+
+        private void dgvItems_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+
+        }
+
+        private void txtSGST9_TextChanged(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form1_Load_1(object sender, EventArgs e)
+        {
+
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            CalculateSummary();
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            var pdf = Document.Create(container =>
             {
-                List<LineOfBusinessDetail> listLineOfBusinessDetail = new List<LineOfBusinessDetail>();
-                for (int t = 0; t < ds.Tables[0].Rows.Count; t++)
+                container.Page(page =>
                 {
+                    page.Size(PageSizes.A4);
+                    page.Margin(20);
 
-                    #region vchTokenNumber
-                    objrequestJSON.vchTokenNumber = vchTokenNumber;
-                    #endregion
-                    #region LineOfBusinessDetail                
-                    LineOfBusinessDetail objLineOfBusinessDetail = new LineOfBusinessDetail();
-                    objLineOfBusinessDetail.vchLobCode = ds.Tables[0].Rows[t]["vchLobCode"].ToString();
-                    objLineOfBusinessDetail.vchLob = ds.Tables[0].Rows[t]["vchLob"].ToString();
-                    objLineOfBusinessDetail.Status = ds.Tables[0].Rows[t]["Status"].ToString();
-                    objLineOfBusinessDetail.Remarks = ds.Tables[0].Rows[t]["Remarks"].ToString();
-                    listLineOfBusinessDetail.Add(objLineOfBusinessDetail);
-                    objrequestJSON.LineOfBusinessDetails = listLineOfBusinessDetail;
-                    #endregion LineOfBusinessDetail
-                }
-
-
-            }
-            if (ds.Tables[1] != null)
-            {
-                List<ProductDetail> listproductDetails = new List<ProductDetail>();
-                for (int t = 0; t < ds.Tables[1].Rows.Count; t++)
-                {
-                    #region ProductDetail
-                    ProductDetail objProductDetail = new ProductDetail();
-                    objProductDetail.vchPolicyType = ds.Tables[1].Rows[t]["vchPolicyType"].ToString();
-                    objProductDetail.vchProductName = ds.Tables[1].Rows[t]["vchProductName"].ToString();
-                    objProductDetail.vchProductCode = ds.Tables[1].Rows[t]["vchProductCode"].ToString();
-                    objProductDetail.vchProductSchema = ds.Tables[1].Rows[t]["vchProductSchema"].ToString();
-                    objProductDetail.vchIRDACode = ds.Tables[1].Rows[t]["vchIRDACode"].ToString();
-                    objProductDetail.mnyMinLimit = ds.Tables[1].Rows[t]["mnyMinLimit"].ToString();
-                    objProductDetail.mnyMaxLimit = ds.Tables[1].Rows[t]["mnyMaxLimit"].ToString();
-                    objProductDetail.Status = ds.Tables[1].Rows[t]["Status"].ToString();
-                    objProductDetail.Remarks = ds.Tables[1].Rows[t]["Remarks"].ToString();
-                    objProductDetail.vchLobCode = ds.Tables[1].Rows[t]["vchLOBCode"].ToString();
-                    listproductDetails.Add(objProductDetail);
-                    #endregion ProductDetail
-                }
-
-                objrequestJSON.ProductDetails = listproductDetails;
-
-            }
-            if (ds.Tables[2] != null)
-            {
-                List<CoverDetail> listCoverDetail = new List<CoverDetail>();
-                for (int t = 0; t < ds.Tables[2].Rows.Count; t++)
-                {
-                    #region CoverDetails
-                    CoverDetail objCoverDetail = new CoverDetail();
-                    objCoverDetail.vchCoverType = ds.Tables[2].Rows[t]["vchCoverType"].ToString();
-                    objCoverDetail.vchSection = ds.Tables[2].Rows[t]["vchSection"].ToString();
-                    objCoverDetail.vchSectionCode = ds.Tables[2].Rows[t]["vchSectionCode"].ToString();
-                    objCoverDetail.vchCoverPerilCode = ds.Tables[2].Rows[t]["vchCoverPerilCode"].ToString();
-                    objCoverDetail.vchCoverDesc = ds.Tables[2].Rows[t]["vchCoverDesc"].ToString();
-                    objCoverDetail.vchCoverCode = ds.Tables[2].Rows[t]["vchCoverCode"].ToString();
-                    objCoverDetail.vchLimitType = ds.Tables[2].Rows[t]["vchLimitType"].ToString();
-                    objCoverDetail.mnyMinLimit = ds.Tables[2].Rows[t]["mnyMinLimit"].ToString();
-                    objCoverDetail.mnyMaxLimit = ds.Tables[2].Rows[t]["mnyMaxLimit"].ToString();
-                    objCoverDetail.Status = ds.Tables[2].Rows[t]["Status"].ToString();
-                    objCoverDetail.Remarks = ds.Tables[2].Rows[t]["Remarks"].ToString();
-                    objCoverDetail.vchProductCode = ds.Tables[2].Rows[t]["vchProductCode"].ToString();
-                    List<CoverPartDetail> objListCoverPartDetails = new List<CoverPartDetail>();
-                    #endregion CoverDetails
-                    if (ds.Tables[3] != null)
+                    page.Header().Column(col =>
                     {
-                        if (ds.Tables[2].Columns.Contains("vchCoverCode") && (ds.Tables[3].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[2].Rows[t]["vchCoverCode"].ToString()).Count() > 0))
-                        {
-                            DataTable SubCover = ds.Tables[3].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[2].Rows[t]["vchCoverCode"].ToString()).CopyToDataTable();
+                        col.Item().Text("AARAV ENTERPRISES")
+                            .FontSize(22)
+                            .Bold();
 
-                            for (int t3 = 0; t3 < SubCover.Rows.Count; t3++)
+                        col.Item().Text("Dal Bazar Lashkar, Gwalior");
+                        col.Item().Text("GSTIN : 23CYSPB9884R1Z8");
+                        col.Item().Text("Contact : +91 9977422337");
+                    });
+
+                    page.Content().PaddingVertical(15).Column(col =>
+                    {
+                        col.Spacing(10);
+
+                        col.Item().AlignCenter().Text("Tax Invoice")
+                            .FontSize(12).FontColor("#9B7AD9")
+                            .Bold();
+
+                        col.Item().Row(row =>
+                        {
+                            row.RelativeItem(3).Border(0).Padding(10).Column(left =>
                             {
-                                CoverPartDetail objCoverPartDetail = new CoverPartDetail();
-                                objCoverPartDetail.vchCoverPartDesc = SubCover.Rows[t3]["vchCoverPartDesc"].ToString();
-                                objCoverPartDetail.Status = SubCover.Rows[t3]["Status"].ToString();
-                                objCoverPartDetail.vchCoverCode = SubCover.Rows[t3]["vchCoverCode"].ToString();
-                                objCoverPartDetail.vchCoverPartCode = SubCover.Rows[t3]["vchCoverPartCode"].ToString();
-                                objCoverPartDetail.vchProductCode= SubCover.Rows[t3]["vchProductCode"].ToString();  
-                                objListCoverPartDetails.Add(objCoverPartDetail);
+                                left.Item().Text("Bill To").Bold();
+
+                                left.Item().Text(txtBillTo.Text);
+                                left.Item().Text("Contact : " + txtContactNo.Text);
+                                left.Item().Text("GSTIN : " + txtGSTINNumber.Text);
+                                left.Item().Text("State : " + txtState.Text);
+                            });
+
+                            row.RelativeItem(2).AlignRight().Border(0).Padding(10).Column(right =>
+                            {
+                                right.Item().Text($"Invoice No : {txtInvoiceNo.Text}");
+                                right.Item().Text($"Invoice Date : {txtInvoiceDate.Value.ToString("dd/MM/yyyy")}");
+                                right.Item().Text($"Place Of Supply : {txtPOS.Text}");
+                            });
+                        });
+
+                        col.Item().PaddingTop(5);
+
+                        col.Item().Table(table =>
+                        {
+                            table.ColumnsDefinition(columns =>
+                            {
+                                columns.RelativeColumn(4);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(2);
+                                columns.RelativeColumn(1);
+                                columns.RelativeColumn(2);
+                            });
+
+                            table.Header(header =>
+                            {
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Item");
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("HSN");
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Qty");
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Unit");
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Rate");
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Discount %");
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("GST %");
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Amount");
+                            });
+
+                            foreach (DataGridViewRow row in dgvItems.Rows)
+                            {
+                                if (row.IsNewRow)
+                                    continue;
+
+                                table.Cell().Border(1).Padding(3)
+                                    .Text(row.Cells["txtItemName"].Value?.ToString() ?? "");
+
+                                table.Cell().Border(1).Padding(3)
+                                    .Text(row.Cells["txtHSN"].Value?.ToString() ?? "");
+
+                                table.Cell().Border(1).Padding(3)
+                                    .Text(row.Cells["txtQty"].Value?.ToString() ?? "");
+
+                                table.Cell().Border(1).Padding(3)
+                                    .Text(row.Cells["txtUnit"].Value?.ToString() ?? "");
+
+                                table.Cell().Border(1).Padding(3)
+                                    .Text(row.Cells["txtPrice"].Value?.ToString() ?? "");
+
+                                table.Cell().Border(1).Padding(3)
+                                    .Text(row.Cells["txtDiscount"].Value?.ToString() ?? "");
+
+                                table.Cell().Border(1).Padding(3)
+                                    .Text(row.Cells["txtGST"].Value?.ToString() ?? "");
+
+                                table.Cell().Border(1).Padding(3)
+                                    .Text(row.Cells["txtAmount"].Value?.ToString() ?? "");
                             }
+                        });
 
+                        string ttlAmt = ConvertAmountToWords(Total);
+                        col.Item().PaddingTop(5);
 
-                        }
-                    }
-                    objCoverDetail.CoverPartDetails = objListCoverPartDetails;
-                    listCoverDetail.Add(objCoverDetail);
-                    objrequestJSON.CoverDetails = listCoverDetail;
-                }
-            }
-
-
-            if (ds.Tables[4] != null)
-            {
-                List<GroupPolicyTagging> listGroupPolicyTagging = new List<GroupPolicyTagging>();
-
-                for (int t = 0; t < ds.Tables[4].Rows.Count; t++)
-                {
-
-                    #region ProductDetail
-                    GroupPolicyTagging objGroupPolicyTagging = new GroupPolicyTagging();
-                    objGroupPolicyTagging.vchPolicyNumber = ds.Tables[4].Rows[t]["vchPolicyNumber"].ToString();
-                    objGroupPolicyTagging.Status = ds.Tables[4].Rows[t]["Status"].ToString();
-                    objGroupPolicyTagging.Remarks = ds.Tables[4].Rows[t]["Remarks"].ToString();
-                    objGroupPolicyTagging.vchProductCode = ds.Tables[4].Rows[t]["vchProductCode"].ToString();
-                    listGroupPolicyTagging.Add(objGroupPolicyTagging);
-
-                    #endregion ProductDetail
-                }
-                objrequestJSON.GroupPolicyTagging = listGroupPolicyTagging;
-
-            }
-            if (ds.Tables[5] != null)
-            {
-                List<PolicyCoverTagging> listPolicyCoverTagging = new List<PolicyCoverTagging>();
-
-
-                for (int t = 0; t < ds.Tables[5].Rows.Count; t++)
-                {
-                    List<CoverTagging> listCoverTagging = new List<CoverTagging>();
-
-                    PolicyCoverTagging objPolicyCoverTagging = new PolicyCoverTagging();
-                    objPolicyCoverTagging.mnySumInsured = ds.Tables[5].Rows[t]["mnySumInsured"].ToString();
-                    objPolicyCoverTagging.vchGroupId = ds.Tables[5].Rows[t]["vchGroupId"].ToString();
-
-                    if (ds.Tables[6] != null)
-                    {
-                        if (ds.Tables[5].Columns.Contains("intPolicyGroupDefId") && (ds.Tables[6].AsEnumerable().Where(r => r.Field<Int64>("intPolicyGroupDefId") == Convert.ToInt64(ds.Tables[5].Rows[t]["intPolicyGroupDefId"])).Count() > 0))
+                        col.Item().Row(mainRow =>
                         {
-                            DataTable PolicyCover = ds.Tables[6].AsEnumerable().Where(r => r.Field<Int64>("intPolicyGroupDefId") == Convert.ToInt64(ds.Tables[5].Rows[t]["intPolicyGroupDefId"])).CopyToDataTable();
-
-                            for (int t1 = 0; t1 < PolicyCover.Rows.Count; t1++)
+                            // Left Side
+                            mainRow.RelativeItem().Column(left =>
                             {
-                                CoverTagging objCoverTagging = new CoverTagging();
-                                objCoverTagging.mnySumInsured = PolicyCover.Rows[t1]["mnySumInsured"].ToString();
-                                objCoverTagging.vchGroupId = PolicyCover.Rows[t1]["vchGroupId"].ToString();
-                                objCoverTagging.vchCoverCode = PolicyCover.Rows[t1]["vchCoverCode"].ToString();
-                                objCoverTagging.vchLimitType = PolicyCover.Rows[t1]["vchLimitType"].ToString();
-                                objCoverTagging.intUnit = PolicyCover.Rows[t1]["intUnit"].ToString();
-                                objCoverTagging.mnyLimit = PolicyCover.Rows[t1]["mnyLimit"].ToString();
-                                objCoverTagging.mnyMaxLimit = PolicyCover.Rows[t1]["mnyMaxLimit"].ToString();
-                                objCoverTagging.intPreDays = PolicyCover.Rows[t1]["intPreDays"].ToString();
-                                objCoverTagging.intPostDays = PolicyCover.Rows[t1]["intPostDays"].ToString();
-                                objCoverTagging.fltDefaultValue = PolicyCover.Rows[t1]["fltDefaultValue"].ToString();
-                                objCoverTagging.vchRemarks = PolicyCover.Rows[t1]["vchRemarks"].ToString();
-                                objCoverTagging.Status = PolicyCover.Rows[t1]["Status"].ToString();
-                                objCoverTagging.vchCoverType = PolicyCover.Rows[t1]["vchCoverType"].ToString();
-                                objCoverTagging.vchProductCode = PolicyCover.Rows[t1]["vchProductCode"].ToString();
+                                left.Item().Text("Invoice Amount In Words").Bold().FontSize(10);
+                                left.Item().PaddingTop(5);
+                                left.Item().Text(ttlAmt);
+                                left.Item().PaddingTop(5);
+                                left.Item().Text("Terms & Conditions").Bold().FontSize(10);
+                                left.Item().PaddingTop(5);
+                                left.Item().Text("Thank you for doing business with us.");
+                            });
 
-
-                                if (ds.Tables[7] != null)
+                            // Right Side
+                            mainRow.ConstantItem(250).Column(summary =>
+                            {
+                                void AddRow(string title, string value)
                                 {
-                                    List<SubCoverTagging> ListsubCoverTaggings = new List<SubCoverTagging>();
-                                    if (ds.Tables[6].Columns.Contains("vchCoverCode") && (ds.Tables[7].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[6].Rows[t1]["vchCoverCode"].ToString()
-                                    && r.Field<string>("vchGroupId") == PolicyCover.Rows[t1]["vchGroupId"].ToString()
-                                    ).Count() > 0))
+                                    summary.Item().Row(row =>
                                     {
-                                        DataTable PolicySubCover = ds.Tables[7].AsEnumerable().Where(r => r.Field<string>("vchCoverCode") == ds.Tables[6].Rows[t1]["vchCoverCode"].ToString()
-                                        &&
-                                        r.Field<string>("vchGroupId") == ds.Tables[5].Rows[t]["vchGroupId"].ToString()
-                                        ).CopyToDataTable();
-
-                                        for (int t2 = 0; t2 < PolicySubCover.Rows.Count; t2++)
-                                        {
-
-                                            SubCoverTagging objsubCoverTagging = new SubCoverTagging();
-                                            objsubCoverTagging.mnySumInsured = PolicySubCover.Rows[t2]["mnySumInsured"].ToString();
-                                            objsubCoverTagging.vchGroupId = PolicySubCover.Rows[t2]["vchGroupId"].ToString();
-                                            objsubCoverTagging.vchCoverType = PolicySubCover.Rows[t2]["vchCoverType"].ToString();
-                                            objsubCoverTagging.vchCoverPartCode = PolicySubCover.Rows[t2]["vchCoverPartCode"].ToString();
-                                            objsubCoverTagging.vchLimitType = PolicySubCover.Rows[t2]["vchLimitType"].ToString();
-                                            objsubCoverTagging.intUnit = PolicySubCover.Rows[t2]["intUnit"].ToString();
-                                            objsubCoverTagging.mnyLimit = PolicySubCover.Rows[t2]["mnyLimit"].ToString();
-                                            objsubCoverTagging.mnyMaxLimit = PolicySubCover.Rows[t2]["mnyMaxLimit"].ToString();
-                                            objsubCoverTagging.intPreDays = PolicySubCover.Rows[t2]["intPreDays"].ToString();
-                                            objsubCoverTagging.intPostDays = PolicySubCover.Rows[t2]["intPostDays"].ToString();
-                                            objsubCoverTagging.fltDefaultValue = PolicySubCover.Rows[t2]["fltDefaultValue"].ToString();
-                                            objsubCoverTagging.vchRemarks = PolicySubCover.Rows[t2]["vchRemarks"].ToString();
-                                            objsubCoverTagging.Status = PolicySubCover.Rows[t2]["Status"].ToString();
-                                            ListsubCoverTaggings.Add(objsubCoverTagging);
-                                            objCoverTagging.SubCoverTagging = ListsubCoverTaggings;
-                                        }
-
-                                    }
-
+                                        row.RelativeItem().Text(title).Bold();
+                                        row.ConstantItem(80).AlignRight().Text(value);
+                                    });
                                 }
 
-                                listCoverTagging.Add(objCoverTagging);
+                                AddRow("Sub Total", SubTotal.ToString("0.00"));
+                                AddRow("Discount", TotalDiscount.ToString("0.00"));
+                                AddRow("SGST @ 9%", SGST9.ToString("0.00"));
+                                AddRow("CGST @ 9%", CGST9.ToString("0.00"));
+                                AddRow("Total", Total.ToString("0.00"));
+                                AddRow("Received", Received.ToString("0.00"));
+                                AddRow("Balance", Balance.ToString("0.00"));
+                                AddRow("You Saved", Saved.ToString("0.00"));
+                            });
+                        });
 
-                            }
-                        }
+                        col.Item().PaddingTop(15);
 
+                        col.Item().PaddingTop(20);
 
-                    }
-                    RoomExpenseTagging objroomExpenseTagging = new RoomExpenseTagging();
-                    List<RoomExpenseTagging> lstroomExpenseTaggings = new List<RoomExpenseTagging>();
-                    if (ds.Tables[8] != null)
-                    {
-
-                        for (int t3 = 0; t3 < ds.Tables[8].Rows.Count; t3++)
+                        col.Item().Row(row =>
                         {
+                            row.RelativeItem();
 
-                            objroomExpenseTagging.isRoomExpenseAvailable = Convert.ToBoolean(ds.Tables[8].Rows[t3]["isRoomExpenseAvailable"]);
-                            objroomExpenseTagging.mnySumInsured = ds.Tables[8].Rows[t3]["mnySumInsured"].ToString();
-                            objroomExpenseTagging.vchGroupId = ds.Tables[8].Rows[t3]["vchGroupId"].ToString();
-                            objroomExpenseTagging.vchRoomType = ds.Tables[8].Rows[t3]["vchRoomType"].ToString();
-                            objroomExpenseTagging.vchVolumeType = ds.Tables[8].Rows[t3]["vchVolumeType"].ToString();
-                            objroomExpenseTagging.mnyVolumneLimit = ds.Tables[8].Rows[t3]["mnyVolumneLimit"].ToString();
-                            objroomExpenseTagging.mnyUpto = ds.Tables[8].Rows[t3]["mnyUpto"].ToString();
-                        }
-                        lstroomExpenseTaggings.Add(objroomExpenseTagging);
-                    }
+                            row.ConstantItem(200)
+                                .Column(x =>
+                                {
+                                    //x.Item().Text("For Your Company");
+                                    //x.Item().Height(60);
+                                    x.Item().AlignCenter().Text("Authorized Signatory");
+                                });
+                        });
+                    });
 
-                    listPolicyCoverTagging.Add(objPolicyCoverTagging);
-                    objPolicyCoverTagging.CoverTagging = listCoverTagging;
-                    objPolicyCoverTagging.RoomExpenseTagging = lstroomExpenseTaggings;
-                    objrequestJSON.PolicyCoverTagging = listPolicyCoverTagging;
-                }
+                    page.Footer()
+                        .AlignCenter()
+                        .Text(text =>
+                        {
+                            text.Span("Thank you for your business!").SemiBold();
+                        });
+                });
+            }).GeneratePdf();
 
-                ReqJason = JsonConvert.SerializeObject(objrequestJSON);
+            // Save PDF
+            SaveFileDialog saveDialog = new SaveFileDialog();
+            saveDialog.Filter = "PDF Files (*.pdf)|*.pdf";
+            saveDialog.FileName = "Invoice.pdf";
 
-                string sTrResponse = "";
-                sTrResponse = APIPostMethodForData(ReqJason, DataPostUrl, vchTokenNumber);
-                ApiPaymentLog(DataPostUrl, ReqJason, sTrResponse, Policyno);
-                if (sTrResponse != null)
+            if (saveDialog.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllBytes(saveDialog.FileName, pdf);
+
+                //MessageBox.Show("PDF saved successfully!","Success",MessageBoxButtons.OK,MessageBoxIcon.Information);
+
+                // Open PDF automatically
+                Process.Start(new ProcessStartInfo
                 {
-                    ResponceProduct myDeserializedClass = JsonConvert.DeserializeObject<ResponceProduct>(sTrResponse);
-                    if (myDeserializedClass.OverallStatus == "Completed")
-                    {
+                    FileName = saveDialog.FileName,
+                    UseShellExecute = true
+                });
+            }
+        }
+        private void CalculateSummary()
+        {
+            //SubTotal = 0;
+            //TotalDiscount = 0;
+            //SGST25 = 0;
+            //CGST25 = 0;
+            //SGST9 = 0;
+            //CGST9 = 0;
 
-                    }
+            foreach (DataGridViewRow row in dgvItems.Rows)
+            {
+                if (row.IsNewRow)
+                    continue;
+
+                decimal qty = Convert.ToDecimal(row.Cells["txtQty"].Value ?? 0);
+                decimal price = Convert.ToDecimal(row.Cells["txtPrice"].Value ?? 0);
+                decimal discount = Convert.ToDecimal(row.Cells["txtDiscount"].Value ?? 0);
+                decimal gst = Convert.ToDecimal(row.Cells["txtGST"].Value ?? 0);
+
+                decimal baseAmount = qty * price;
+
+                decimal discountAmt = baseAmount * discount / 100;
+                TotalDiscount += discountAmt;
+
+                decimal taxableAmount = baseAmount - discountAmt;
+
+                SubTotal += taxableAmount;
+
+                if (gst > 0)
+                {
+                    //SGST25 += taxableAmount * 2.5m / 100;
+                    //CGST25 += taxableAmount * 2.5m / 100;
+
+                    SGST9 += taxableAmount * 9m / 100;
+                    CGST9 += taxableAmount * 9m / 100;
                 }
             }
 
+            Saved = TotalDiscount;
+
+            decimal grandTotal =
+                SubTotal +
+                SGST25 +
+                CGST25 +
+                SGST9 +
+                CGST9;
+
+            decimal.TryParse(Received.ToString(), out Received);
+
+            Balance = grandTotal - Received;
+            Total = grandTotal;
         }
-        public string APIPostMethod(string Json, string url)
+
+        private void btnAdmin_Click(object sender, EventArgs e)
         {
-            string resultof = "";
-            try
+            string pin = Microsoft.VisualBasic.Interaction.InputBox(
+                "Enter Admin PIN",
+                "Admin Login",
+                "");
+
+            if (pin == "696969") // Your PIN
             {
-                //WriteLog(Environment.NewLine + string.Format("** inside  APIPostMethodForPayment "));
-                //Below Line added by NIA
-                //System.Net.ServicePointManager.Expect100Continue = false;
-                // declare ascii encoding
-                ServicePointManager.Expect100Continue = true;
-                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
-
-                ASCIIEncoding encoding = new ASCIIEncoding();
-                string strResult = string.Empty;
-                // sample xml sent to Service & this data is sent in POST
-                string postData = Json.ToString();
-                // convert xmlstring to byte using ascii encoding
-                byte[] data = encoding.GetBytes(postData);
-                // declare httpwebrequet wrt url defined above
-                HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(url);
-                //webrequest.Credentials = new NetworkCredential("CignaAPIIntegration", "n199cH}@'HE;!@#");
-                //string strAuth="Basic " + Convert.ToBase64String(Encoding.Default.GetBytes("CignaAPIIntegration:n199cH}@'HE;!@#"));
-                //webrequest.Headers["Authorization"] = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes("CignaAPIIntegration:n199cH}@'HE;!@#"));
-                // webrequest.Credentials = CredentialCache.DefaultNetworkCredentials;
-                webrequest.Timeout = 999999;
-                //webrequest.KeepAlive = true;
-                // set method as post
-                webrequest.Method = "POST";
-                // set content type 
-                //webrequest.Headers["WWW-Authenticate"] = strAuth.ToString();
-
-                /*
-                webrequest.Headers.Add("Username", "CignaAPIIntegration");
-                webrequest.Headers.Add("Password", "n199cH}@'HE;!@#");
-                 */
-                /*For New API*/
-                /*
-                webrequest.Headers.Add("app_key", "61e67f4ed7614ad822b494977444c7aa");
-                webrequest.Headers.Add("app_id", "17449a01");
-               */
-                // webrequest.Headers.Add("app_key", app_key);
-                // webrequest.Headers.Add("app_id", app_id);
-
-                webrequest.ContentType = "application/json";
-                webrequest.Accept = "application/json";
-                // set content length
-                webrequest.ContentLength = data.Length;
-                //webrequest.Credentials = new 
-                // get stream data out of webrequest object
-                Stream newStream = webrequest.GetRequestStream();
-                newStream.Write(data, 0, data.Length);
-                newStream.Close();
-                // declare & read response from service
-                HttpWebResponse webresponse = (HttpWebResponse)webrequest.GetResponse();
-                // set utf8 encoding
-                Encoding enc = System.Text.Encoding.UTF8;
-                // read response stream from response object
-                StreamReader loResponseStream = new StreamReader(webresponse.GetResponseStream(), enc);
-                // read string from stream data
-                strResult = loResponseStream.ReadToEnd();
-                // close the stream object
-                loResponseStream.Close();
-                // close the response object
-                webresponse.Close();
-                // below steps remove unwanted data from response string
-                //return strResult.Replace("</string>", "");
-                resultof = Convert.ToString(strResult);
+                Inventory inventoryForm = new Inventory();
+                inventoryForm.ShowDialog();
             }
-            catch (Exception ex)
+            else
             {
-                // WriteLog(Environment.NewLine + string.Format("** Exception in bank api call " + ex.Message.ToString(), ex.Message.ToString()));
-                //WriteLog(Environment.NewLine + string.Format("** Exception jason " + Json.ToString()));
-                return resultof;
+                MessageBox.Show(
+                    "Invalid PIN",
+                    "Access Denied",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
             }
-
-            return resultof;
         }
-        public string APIPostMethodForData(string Json, string url, string Token)
+        public static string ConvertAmountToWords(decimal amount)
         {
-            string resultof = null;
-            try
+            long rupees = (long)Math.Floor(amount);
+            int paise = (int)((amount - rupees) * 100);
+
+            string result = "Rupees " + NumberToWords(rupees);
+
+            if (paise > 0)
             {
-                //WriteLog(Environment.NewLine + string.Format("** inside  APIPostMethodForPayment "));
-                //Below Line added by NIA
-                //System.Net.ServicePointManager.Expect100Continue = false;
-                // declare ascii encoding
-                ServicePointManager.Expect100Continue = true;
-                ServicePointManager.SecurityProtocol = (SecurityProtocolType)3072;
-
-                ASCIIEncoding encoding = new ASCIIEncoding();
-                string strResult = string.Empty;
-                // sample xml sent to Service & this data is sent in POST
-                string postData = Json.ToString();
-                // convert xmlstring to byte using ascii encoding
-                byte[] data = encoding.GetBytes(postData);
-                // declare httpwebrequet wrt url defined above
-                HttpWebRequest webrequest = (HttpWebRequest)WebRequest.Create(url);
-                //webrequest.Credentials = new NetworkCredential("CignaAPIIntegration", "n199cH}@'HE;!@#");
-                //string strAuth="Basic " + Convert.ToBase64String(Encoding.Default.GetBytes("CignaAPIIntegration:n199cH}@'HE;!@#"));
-                //webrequest.Headers["Authorization"] = "Basic " + Convert.ToBase64String(Encoding.Default.GetBytes("CignaAPIIntegration:n199cH}@'HE;!@#"));
-                // webrequest.Credentials = CredentialCache.DefaultNetworkCredentials;
-                webrequest.Timeout = 999999;
-                //webrequest.KeepAlive = true;
-                // set method as post
-                webrequest.Method = "POST";
-                // set content type 
-                //webrequest.Headers["WWW-Authenticate"] = strAuth.ToString();
-
-                /*
-                webrequest.Headers.Add("Username", "CignaAPIIntegration");
-                webrequest.Headers.Add("Password", "n199cH}@'HE;!@#");
-                 */
-                /*For New API*/
-                /*
-                webrequest.Headers.Add("app_key", "61e67f4ed7614ad822b494977444c7aa");
-                webrequest.Headers.Add("app_id", "17449a01");
-               */
-                webrequest.Headers.Add("Authorization", Token);
-                // webrequest.Headers.Add("app_id", app_id);
-
-                webrequest.ContentType = "application/json";
-                webrequest.Accept = "application/json";
-                // set content length
-                webrequest.ContentLength = data.Length;
-                //webrequest.Credentials = new 
-                // get stream data out of webrequest object
-                Stream newStream = webrequest.GetRequestStream();
-                newStream.Write(data, 0, data.Length);
-                newStream.Close();
-                // declare & read response from service
-                HttpWebResponse webresponse = (HttpWebResponse)webrequest.GetResponse();
-                // set utf8 encoding
-                Encoding enc = System.Text.Encoding.UTF8;
-                // read response stream from response object
-                StreamReader loResponseStream = new StreamReader(webresponse.GetResponseStream(), enc);
-                // read string from stream data
-                strResult = loResponseStream.ReadToEnd();
-                // close the stream object
-                loResponseStream.Close();
-                // close the response object
-                webresponse.Close();
-                // below steps remove unwanted data from response string
-                //return strResult.Replace("</string>", "");
-                resultof = Convert.ToString(strResult);
-            }
-            catch (Exception ex)
-            {
-                // WriteLog(Environment.NewLine + string.Format("** Exception in bank api call " + ex.Message.ToString(), ex.Message.ToString()));
-                //WriteLog(Environment.NewLine + string.Format("** Exception jason " + Json.ToString()));
-                return resultof;
+                result += " and " + NumberToWords(paise) + " Paise";
             }
 
-            return resultof;
+            return result + " Only";
         }
-        public void ApiPaymentLog(string VchUrl, string VchRequest, string VchResponse, string Vchpolicynumber)
+        public static string NumberToWords(long number)
         {
-            ParametersEntity objDash = new ParametersEntity();
-            objDash.VchUrl = VchUrl;
-            objDash.VchRequest = VchRequest;
-            objDash.VchResponse = VchResponse;
-            objDash.Policyno = Vchpolicynumber;
-            DataSet ds = new DataSet();
-            ds = OblDALIintegration.APILog(objDash);
-            if (ds.Tables[0] != null)
+            if (number == 0)
+                return "Zero";
+
+            if (number < 0)
+                return "Minus " + NumberToWords(Math.Abs(number));
+
+            string words = "";
+
+            if ((number / 10000000) > 0)
             {
-                // OblDALIintegration.Payment_APILog(objDash);
-                //return objDash.IntCPALId;
+                words += NumberToWords(number / 10000000) + " Crore ";
+                number %= 10000000;
             }
+
+            if ((number / 100000) > 0)
+            {
+                words += NumberToWords(number / 100000) + " Lakh ";
+                number %= 100000;
+            }
+
+            if ((number / 1000) > 0)
+            {
+                words += NumberToWords(number / 1000) + " Thousand ";
+                number %= 1000;
+            }
+
+            if ((number / 100) > 0)
+            {
+                words += NumberToWords(number / 100) + " Hundred ";
+                number %= 100;
+            }
+
+            if (number > 0)
+            {
+                if (words != "")
+                    words += "";
+
+                string[] unitsMap =
+                {
+            "Zero","One","Two","Three","Four","Five","Six","Seven","Eight","Nine",
+            "Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen",
+            "Seventeen","Eighteen","Nineteen"
+        };
+
+                string[] tensMap =
+                {
+            "Zero","Ten","Twenty","Thirty","Forty","Fifty",
+            "Sixty","Seventy","Eighty","Ninety"
+        };
+
+                if (number < 20)
+                    words += unitsMap[number];
+                else
+                {
+                    words += tensMap[number / 10];
+
+                    if ((number % 10) > 0)
+                        words += " " + unitsMap[number % 10];
+                }
+            }
+
+            return words.Trim();
+        }
+
+        private void lblMainHeader_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label15_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
