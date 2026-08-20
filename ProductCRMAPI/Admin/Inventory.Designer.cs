@@ -39,6 +39,7 @@ namespace ProductCRMAPI
             this.Qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.PurchasePrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.SalePrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.MRP = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.GST = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.textBoxArray1 = new Microsoft.VisualBasic.Compatibility.VB6.TextBoxArray(this.components);
             this.txtunit = new System.Windows.Forms.TextBox();
@@ -62,6 +63,9 @@ namespace ProductCRMAPI
             this.btnSearch = new System.Windows.Forms.Button();
             this.button1 = new System.Windows.Forms.Button();
             this.txtSNO = new System.Windows.Forms.TextBox();
+            this.txtMRP = new System.Windows.Forms.TextBox();
+            this.lblMRP = new System.Windows.Forms.Label();
+            this.listboxItem = new System.Windows.Forms.ListBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvInventory)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxArray1)).BeginInit();
             this.SuspendLayout();
@@ -82,6 +86,7 @@ namespace ProductCRMAPI
             this.Qty,
             this.PurchasePrice,
             this.SalePrice,
+            this.MRP,
             this.GST});
             this.dgvInventory.GridColor = System.Drawing.SystemColors.ControlDarkDark;
             this.dgvInventory.Location = new System.Drawing.Point(14, 296);
@@ -136,6 +141,13 @@ namespace ProductCRMAPI
             this.SalePrice.MinimumWidth = 8;
             this.SalePrice.Name = "SalePrice";
             this.SalePrice.ReadOnly = true;
+            // 
+            // MRP
+            // 
+            this.MRP.HeaderText = "MRP";
+            this.MRP.MinimumWidth = 8;
+            this.MRP.Name = "MRP";
+            this.MRP.ReadOnly = true;
             // 
             // GST
             // 
@@ -410,11 +422,45 @@ namespace ProductCRMAPI
             this.txtSNO.TabIndex = 45;
             this.txtSNO.Visible = false;
             // 
+            // txtMRP
+            // 
+            this.txtMRP.Location = new System.Drawing.Point(443, 229);
+            this.txtMRP.MaximumSize = new System.Drawing.Size(350, 30);
+            this.txtMRP.MinimumSize = new System.Drawing.Size(350, 30);
+            this.txtMRP.Name = "txtMRP";
+            this.txtMRP.Size = new System.Drawing.Size(350, 30);
+            this.txtMRP.TabIndex = 46;
+            // 
+            // lblMRP
+            // 
+            this.lblMRP.AutoSize = true;
+            this.lblMRP.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMRP.Location = new System.Drawing.Point(444, 206);
+            this.lblMRP.MaximumSize = new System.Drawing.Size(76, 20);
+            this.lblMRP.MinimumSize = new System.Drawing.Size(76, 20);
+            this.lblMRP.Name = "lblMRP";
+            this.lblMRP.Size = new System.Drawing.Size(76, 20);
+            this.lblMRP.TabIndex = 47;
+            this.lblMRP.Text = "MRP";
+            // 
+            // listboxItem
+            // 
+            this.listboxItem.FormattingEnabled = true;
+            this.listboxItem.ItemHeight = 29;
+            this.listboxItem.Location = new System.Drawing.Point(14, 135);
+            this.listboxItem.Name = "listboxItem";
+            this.listboxItem.Size = new System.Drawing.Size(350, 91);
+            this.listboxItem.TabIndex = 48;
+            this.listboxItem.Visible = false;
+            // 
             // Inventory
             // 
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1787, 1044);
+            this.Controls.Add(this.listboxItem);
+            this.Controls.Add(this.lblMRP);
+            this.Controls.Add(this.txtMRP);
             this.Controls.Add(this.txtSNO);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.btnSearch);
@@ -474,15 +520,19 @@ namespace ProductCRMAPI
         private System.Windows.Forms.Label label17;
         private System.Windows.Forms.TextBox textGst;
         private System.Windows.Forms.Button btnSearch;
+        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.TextBox txtSNO;
+        private System.Windows.Forms.TextBox txtMRP;
+        private System.Windows.Forms.Label lblMRP;
         private System.Windows.Forms.DataGridViewTextBoxColumn ItemName;
         private System.Windows.Forms.DataGridViewTextBoxColumn HSN;
         private System.Windows.Forms.DataGridViewTextBoxColumn Unit;
         private System.Windows.Forms.DataGridViewTextBoxColumn Qty;
         private System.Windows.Forms.DataGridViewTextBoxColumn PurchasePrice;
         private System.Windows.Forms.DataGridViewTextBoxColumn SalePrice;
+        private System.Windows.Forms.DataGridViewTextBoxColumn MRP;
         private System.Windows.Forms.DataGridViewTextBoxColumn GST;
-        private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.TextBox txtSNO;
+        private System.Windows.Forms.ListBox listboxItem;
     }
 }
 

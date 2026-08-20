@@ -33,7 +33,7 @@ namespace ProductCRMAPI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvItems = new System.Windows.Forms.DataGridView();
             this.textBoxArray1 = new Microsoft.VisualBasic.Compatibility.VB6.TextBoxArray(this.components);
             this.txtGSTINNumber = new System.Windows.Forms.TextBox();
@@ -73,19 +73,21 @@ namespace ProductCRMAPI
             this.button3 = new System.Windows.Forms.Button();
             this.txtSNO = new System.Windows.Forms.TextBox();
             this.txtlistbox = new System.Windows.Forms.ListBox();
+            this.listBoxBillingSearch = new System.Windows.Forms.ListBox();
+            this.button4 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvItems)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxArray1)).BeginInit();
             this.SuspendLayout();
             // 
             // dgvItems
             // 
-            dataGridViewCellStyle2.BackColor = System.Drawing.Color.LightGray;
-            this.dgvItems.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle7.BackColor = System.Drawing.Color.LightGray;
+            this.dgvItems.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
             this.dgvItems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvItems.BackgroundColor = System.Drawing.Color.White;
             this.dgvItems.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvItems.Location = new System.Drawing.Point(14, 409);
+            this.dgvItems.Location = new System.Drawing.Point(14, 446);
             this.dgvItems.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.dgvItems.Name = "dgvItems";
             this.dgvItems.ReadOnly = true;
@@ -159,12 +161,14 @@ namespace ProductCRMAPI
             this.txtBillTo.Name = "txtBillTo";
             this.txtBillTo.Size = new System.Drawing.Size(350, 30);
             this.txtBillTo.TabIndex = 1;
+            this.txtBillTo.KeyUp += new System.Windows.Forms.KeyEventHandler(this.txtBillTo_KeyUp);
             // 
             // txtInvoiceNo
             // 
             this.txtInvoiceNo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtInvoiceNo.BackColor = System.Drawing.Color.White;
+            this.txtInvoiceNo.Enabled = false;
             this.txtInvoiceNo.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtInvoiceNo.ForeColor = System.Drawing.Color.Black;
             this.txtInvoiceNo.Location = new System.Drawing.Point(443, 169);
@@ -219,7 +223,6 @@ namespace ProductCRMAPI
             this.txtItemName.Name = "txtItemName";
             this.txtItemName.Size = new System.Drawing.Size(340, 30);
             this.txtItemName.TabIndex = 11;
-            this.txtItemName.KeyUp += this.txtItemName_KeyUp;
             // 
             // label1
             // 
@@ -547,7 +550,7 @@ namespace ProductCRMAPI
             // button2
             // 
             this.button2.Image = global::ProductCRMAPI.Properties.Resources.print;
-            this.button2.Location = new System.Drawing.Point(609, 565);
+            this.button2.Location = new System.Drawing.Point(609, 583);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(114, 35);
             this.button2.TabIndex = 38;
@@ -569,7 +572,7 @@ namespace ProductCRMAPI
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(745, 565);
+            this.button3.Location = new System.Drawing.Point(745, 583);
             this.button3.MaximumSize = new System.Drawing.Size(104, 35);
             this.button3.MinimumSize = new System.Drawing.Size(104, 35);
             this.button3.Name = "button3";
@@ -589,32 +592,46 @@ namespace ProductCRMAPI
             // 
             // txtlistbox
             // 
+            this.txtlistbox.BackColor = System.Drawing.Color.White;
+            this.txtlistbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtlistbox.Font = new System.Drawing.Font("Segoe UI", 12F);
+            this.txtlistbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(122)))), ((int)(((byte)(217)))));
             this.txtlistbox.FormattingEnabled = true;
-            this.txtlistbox.ItemHeight = 35;
-            this.txtlistbox.Location = new System.Drawing.Point(19, 396);
+            this.txtlistbox.IntegralHeight = false;
+            this.txtlistbox.ItemHeight = 32;
+            this.txtlistbox.Location = new System.Drawing.Point(19, 389);
             this.txtlistbox.Name = "txtlistbox";
-            this.txtlistbox.Size = new System.Drawing.Size(340, 149);
+            this.txtlistbox.Size = new System.Drawing.Size(340, 120);
             this.txtlistbox.TabIndex = 42;
             this.txtlistbox.Visible = false;
-            this.txtlistbox.MouseClick += this.listBoxItems_Click;
-            this.txtlistbox.KeyDown += this.listBoxItems_KeyDown;
-            this.txtlistbox.Visible = false;
-            this.txtlistbox.BorderStyle = BorderStyle.FixedSingle;
-            this.txtlistbox.Font = new Font("Segoe UI", 12);
-            this.txtlistbox.IntegralHeight = false;
-            this.txtlistbox.Height = 120;
-            this.txtlistbox.Left = txtItemName.Left;
-            this.txtlistbox.Top = txtItemName.Bottom + 2;
-            this.txtlistbox.Width = txtItemName.Width;
-            this.txtlistbox.BackColor = Color.White;
-            this.txtlistbox.ForeColor = ColorTranslator.FromHtml("#9B7AD9");
-
+            // 
+            // listBoxBillingSearch
+            // 
+            this.listBoxBillingSearch.FormattingEnabled = true;
+            this.listBoxBillingSearch.ItemHeight = 29;
+            this.listBoxBillingSearch.Location = new System.Drawing.Point(14, 136);
+            this.listBoxBillingSearch.Name = "listBoxBillingSearch";
+            this.listBoxBillingSearch.Size = new System.Drawing.Size(345, 120);
+            this.listBoxBillingSearch.TabIndex = 43;
+            this.listBoxBillingSearch.Visible = false;
+            // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(855, 583);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(103, 35);
+            this.button4.TabIndex = 44;
+            this.button4.Text = "Clear";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.btnClear_Click);
             // 
             // Form1
             // 
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1787, 1044);
+            this.Controls.Add(this.button4);
+            this.Controls.Add(this.listBoxBillingSearch);
             this.Controls.Add(this.txtlistbox);
             this.Controls.Add(this.txtSNO);
             this.Controls.Add(this.button3);
@@ -708,6 +725,8 @@ namespace ProductCRMAPI
         private System.Windows.Forms.Button button3;
         private TextBox txtSNO;
         private ListBox txtlistbox;
+        private ListBox listBoxBillingSearch;
+        private Button button4;
     }
 }
 

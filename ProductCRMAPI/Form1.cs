@@ -22,6 +22,7 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using static QuestPDF.Helpers.Colors;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using LicenseContext = OfficeOpenXml.LicenseContext;
 
 namespace ProductCRMAPI
 {
@@ -37,7 +38,8 @@ namespace ProductCRMAPI
         decimal Balance = 0;
         decimal Saved = 0;
         decimal Total = 0;
-        string excelFile = @"C:\Users\G42055\Documents\Inventory.xlsx";
+        string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Invoice.xlsx");
+        Dictionary<string, string> productList = new Dictionary<string, string>();
         public Form1()
         {
             InitializeComponent();
@@ -57,7 +59,8 @@ namespace ProductCRMAPI
             {
                 "KG",
                 "LITER",
-                "NO",
+                "Pcs",
+                "Boxes",
                 "GRAM",
                 "METER",
                 "HOURS"
@@ -72,6 +75,10 @@ namespace ProductCRMAPI
             txtGST.TextChanged += Input_TextChanged;
 
             InitializeInvoiceGrid();
+            txtInvoiceNo.Text = GenerateInvoiceNumber();
+            listBoxBillingSearch.MouseClick += listBoxBilling_Click;
+            txtItemName.KeyUp += txtItemName_KeyUp;
+            txtlistbox.MouseClick += listBoxItems_Click;
         }
         private void InitializeInvoiceGrid()
         {
@@ -116,10 +123,14 @@ namespace ProductCRMAPI
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrEmpty(txtDiscount.Text))
+                txtDiscount.Text = "0";
+
             decimal qty = Convert.ToDecimal(txtQty.Text);
             decimal price = Convert.ToDecimal(txtPrice.Text);
             decimal discount = Convert.ToDecimal(txtDiscount.Text);
             decimal gst = Convert.ToDecimal(txtGST.Text);
+
 
             decimal amount = qty * price;
             amount -= amount * discount / 100;
@@ -134,7 +145,7 @@ namespace ProductCRMAPI
                 qty,
                 cmbUnit.SelectedItem.ToString(),
                 price,
-                discount,
+                discount == 0m ? "" : discount.ToString("0.##"),
                 gst,
                 finalAmount
             );
@@ -210,8 +221,9 @@ namespace ProductCRMAPI
         private void button2_Click(object sender, EventArgs e)
         {
             CalculateSummary();
+            
             QuestPDF.Settings.License = LicenseType.Community;
-
+            
             var pdf = Document.Create(container =>
             {
                 container.Page(page =>
@@ -281,7 +293,8 @@ namespace ProductCRMAPI
                                 header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Qty");
                                 header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Unit");
                                 header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Rate");
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Discount %");
+                                if (TotalDiscount > 0)
+                                    header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Discount %");
                                 header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("GST %");
                                 header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Amount");
                             });
@@ -306,14 +319,17 @@ namespace ProductCRMAPI
                                 table.Cell().Border(1).Padding(3)
                                     .Text(row.Cells["txtPrice"].Value?.ToString() ?? "");
 
-                                table.Cell().Border(1).Padding(3)
-                                    .Text(row.Cells["txtDiscount"].Value?.ToString() ?? "");
+                                if (TotalDiscount > 0)
+                                    table.Cell().Border(1).Padding(3).Text(row.Cells["txtDiscount"].Value?.ToString() ?? "");
 
                                 table.Cell().Border(1).Padding(3)
                                     .Text(row.Cells["txtGST"].Value?.ToString() ?? "");
 
                                 table.Cell().Border(1).Padding(3)
                                     .Text(row.Cells["txtAmount"].Value?.ToString() ?? "");
+
+                                productList.Add(row.Cells["txtItemName"].Value.ToString(), row.Cells["txtQty"].Value.ToString());
+                                
                             }
                         });
 
@@ -347,7 +363,8 @@ namespace ProductCRMAPI
                                 }
 
                                 AddRow("Sub Total", SubTotal.ToString("0.00"));
-                                AddRow("Discount", TotalDiscount.ToString("0.00"));
+                                if(TotalDiscount > 0)
+                                    AddRow("Discount", TotalDiscount.ToString("0.00"));
                                 AddRow("SGST @ 9%", SGST9.ToString("0.00"));
                                 AddRow("CGST @ 9%", CGST9.ToString("0.00"));
                                 AddRow("Total", Total.ToString("0.00"));
@@ -375,19 +392,19 @@ namespace ProductCRMAPI
                         });
                     });
 
-                    page.Footer()
-                        .AlignCenter()
-                        .Text(text =>
-                        {
-                            text.Span("Thank you for your business!").SemiBold();
-                        });
+                    //page.Footer()
+                    //    .AlignCenter()
+                    //    .Text(text =>
+                    //    {
+                    //        text.Span("Thank you for your business!").SemiBold();
+                    //    });
                 });
             }).GeneratePdf();
-
+            UpdateItem();
             // Save PDF
             SaveFileDialog saveDialog = new SaveFileDialog();
             saveDialog.Filter = "PDF Files (*.pdf)|*.pdf";
-            saveDialog.FileName = "Invoice.pdf";
+            saveDialog.FileName = "Invoice_"+ txtBillTo.Text+".pdf";
 
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
@@ -402,6 +419,7 @@ namespace ProductCRMAPI
                     UseShellExecute = true
                 });
             }
+            btnAddUpdate_Click();
         }
         private void CalculateSummary()
         {
@@ -416,6 +434,8 @@ namespace ProductCRMAPI
             {
                 if (row.IsNewRow)
                     continue;
+                if (string.IsNullOrEmpty(row.Cells["txtDiscount"].Value.ToString()))
+                    row.Cells["txtDiscount"].Value = 0;
 
                 decimal qty = Convert.ToDecimal(row.Cells["txtQty"].Value ?? 0);
                 decimal price = Convert.ToDecimal(row.Cells["txtPrice"].Value ?? 0);
@@ -558,6 +578,7 @@ namespace ProductCRMAPI
         }
         private void FetchItemDetails(string itemName)
         {
+            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Inventory.xlsx");
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
             using (var package = new ExcelPackage(new FileInfo(excelFile)))
@@ -589,6 +610,7 @@ namespace ProductCRMAPI
         //}
         private void txtItemName_KeyUp(object sender, KeyEventArgs e)
         {
+            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Inventory.xlsx");
             txtlistbox.Items.Clear();
 
             string searchText = txtItemName.Text.Trim().ToLower();
@@ -652,6 +674,215 @@ namespace ProductCRMAPI
         private void label15_Click(object sender, EventArgs e)
         {
 
+        }
+        private string GenerateInvoiceNumber()
+        {
+            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Invoice.xlsx");
+            int nextNumber = 1;
+
+            if (File.Exists(excelFile))
+            {
+                ExcelPackage.License.SetNonCommercialPersonal("Rahul");
+
+                using (var package = new ExcelPackage(new FileInfo(excelFile)))
+                {
+                    var sheet = package.Workbook.Worksheets[0];
+
+                    if (sheet.Dimension != null)
+                    {
+                        int lastRow = sheet.Dimension.Rows;
+
+                        if (lastRow > 1)
+                        {
+                            string lastInvoice =
+                                sheet.Cells[lastRow, 2].Text; // Column A
+
+                            if (!string.IsNullOrEmpty(lastInvoice))
+                            {
+                                string numberPart = lastInvoice.Split('/')[0];
+
+                                if (int.TryParse(numberPart, out int lastNo))
+                                {
+                                    nextNumber = lastNo + 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return $"{nextNumber:D4}/26-27";
+        }
+        private void btnAddUpdate_Click()
+        {
+            //CreateExcelIfNotExists();
+            string excelFile = Path.Combine(Application.StartupPath,"Uploads","Invoice.xlsx");
+            ExcelPackage.License.SetNonCommercialPersonal("Rahul");
+
+            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            {
+                var sheet = package.Workbook.Worksheets["Invoice"];
+
+                int lastRow = sheet.Dimension?.Rows ?? 1;
+                int nextRow = lastRow + 1;
+
+                sheet.Cells[nextRow, 1].Value = nextRow;
+                sheet.Cells[nextRow, 2].Value = txtInvoiceNo.Text;
+                sheet.Cells[nextRow, 3].Value = txtBillTo.Text;
+                sheet.Cells[nextRow, 4].Value = txtContactNo.Text;
+                sheet.Cells[nextRow, 5].Value = txtGSTINNumber.Text;
+                sheet.Cells[nextRow, 6].Value = txtState.Text;
+                sheet.Cells[nextRow, 7].Value = txtPOS.Text;
+
+                package.Save();
+            }
+
+            //LoadInventory();
+            //MessageBox.Show("Bill generated!");
+        }
+        private void FetchBillingDetails(string itemName)
+        {
+            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Invoice.xlsx");
+            ExcelPackage.License.SetNonCommercialPersonal("Rahul");
+
+            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            {
+                var sheet = package.Workbook.Worksheets[0];
+
+                int rows = sheet.Dimension.Rows;
+
+                for (int i = 2; i <= rows; i++)
+                {
+                    if (sheet.Cells[i, 3].Text.ToUpper() == itemName.ToUpper())
+                    {
+                        txtSNO.Text = sheet.Cells[i, 1].Text;
+                        txtBillTo.Text = sheet.Cells[i, 3].Text;
+                        txtContactNo.Text = sheet.Cells[i, 4].Text;
+                        txtGSTINNumber.Text = sheet.Cells[i, 5].Text;
+                        txtState.Text = sheet.Cells[i, 6].Text;
+                        txtPOS.Text = sheet.Cells[i, 7].Text;
+                        break;
+                    }
+                }
+            }
+        }
+        private void txtBillTo_KeyUp(object sender, KeyEventArgs e)
+        {
+            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Invoice.xlsx");
+
+            listBoxBillingSearch.Items.Clear();
+
+            string searchText = txtBillTo.Text.Trim().ToLower();
+
+            if (string.IsNullOrEmpty(searchText))
+            {
+                listBoxBillingSearch.Visible = false;
+                return;
+            }
+
+            ExcelPackage.License.SetNonCommercialPersonal("Rahul");
+
+            HashSet<string> uniqueItems = new HashSet<string>();
+
+            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            {
+                var sheet = package.Workbook.Worksheets[0];
+                int rows = sheet.Dimension.Rows;
+
+                for (int i = 2; i <= rows; i++)
+                {
+                    string itemName = sheet.Cells[i, 3].Text.Trim();
+
+                    if (itemName.ToLower().Contains(searchText))
+                    {
+                        if (uniqueItems.Add(itemName)) // Adds only if not already present
+                        {
+                            listBoxBillingSearch.Items.Add(itemName.ToUpper());
+                        }
+                    }
+                }
+            }
+
+            listBoxBillingSearch.Visible = listBoxBillingSearch.Items.Count > 0;
+        }
+        private void listBoxBilling_Click(object sender, EventArgs e)
+        {
+            if (listBoxBillingSearch.SelectedItem != null)
+            {
+                txtBillTo.Text = listBoxBillingSearch.SelectedItem.ToString();
+
+                FetchBillingDetails(txtBillTo.Text.ToUpper());
+
+                listBoxBillingSearch.Visible = false;
+            }
+        }
+        private void listBoxBilling_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                if (listBoxBillingSearch.SelectedItem != null)
+                {
+                    txtBillTo.Text = listBoxBillingSearch.SelectedItem.ToString();
+
+                    FetchBillingDetails(txtBillTo.Text);
+
+                    listBoxBillingSearch.Visible = false;
+                }
+            }
+        }
+
+        private void btnClear_Click(object sender, EventArgs e)
+        {
+            txtBillTo.Clear();
+            txtContactNo.Clear();
+            txtGSTINNumber.Clear();
+            txtPOS.Clear();
+            txtState.Clear();
+            txtInvoiceNo.Text = GenerateInvoiceNumber();
+            dgvItems.Rows.Clear();
+        }
+
+        private void UpdateItem()
+        {
+
+            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Inventory.xlsx");
+            ExcelPackage.License.SetNonCommercialPersonal("Rahul");
+
+            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            {
+                var sheet = package.Workbook.Worksheets[0];
+
+                int rows = sheet.Dimension.Rows;
+                foreach (var product in productList)
+                {
+                    string productName = product.Key;
+                    string qty = product.Value;
+
+                    for (int i = 2; i <= rows; i++)
+                    {
+                        if (sheet.Cells[i, 2].Text == productName &&
+                            sheet.Cells[i, 3].Text == qty)
+                        {
+                            // Match found
+                            sheet.Cells[i, 5].Value = Qty;
+                        }
+                    }
+                }
+
+                package.Save();
+                return;
+                //for (int i = 2; i <= rows; i++)
+                //{
+                //    if (sheet.Cells[i, 2].Text == item)
+                //    {
+                //        sheet.Cells[i, 5].Value = Qty;
+
+                //        package.Save();
+
+                //        return;
+                //    }
+                //}
+            }
         }
     }
 }
