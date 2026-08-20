@@ -840,6 +840,7 @@ namespace ProductCRMAPI
             txtState.Clear();
             txtInvoiceNo.Text = GenerateInvoiceNumber();
             dgvItems.Rows.Clear();
+            ClearItemFields();
         }
 
         private void UpdateItem()
@@ -860,16 +861,16 @@ namespace ProductCRMAPI
 
                     for (int i = 2; i <= rows; i++)
                     {
-                        if (sheet.Cells[i, 2].Text == productName &&
-                            sheet.Cells[i, 3].Text == qty)
+                        if (sheet.Cells[i, 2].Text.ToLower() == productName.ToLower())
                         {
-                            // Match found
-                            sheet.Cells[i, 5].Value = Qty;
+                            int temp = Convert.ToInt32(sheet.Cells[i, 5].Value.ToString());
+                            sheet.Cells[i, 5].Value = temp - Convert.ToInt32(qty);
                         }
                     }
                 }
 
                 package.Save();
+                productList.Clear();
                 return;
                 //for (int i = 2; i <= rows; i++)
                 //{
