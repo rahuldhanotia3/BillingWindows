@@ -33,7 +33,7 @@ namespace ProductCRMAPI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle7 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dgvItems = new System.Windows.Forms.DataGridView();
             this.textBoxArray1 = new Microsoft.VisualBasic.Compatibility.VB6.TextBoxArray(this.components);
             this.txtGSTINNumber = new System.Windows.Forms.TextBox();
@@ -68,21 +68,22 @@ namespace ProductCRMAPI
             this.label15 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.cmbUnit = new System.Windows.Forms.ComboBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.txtInvoiceDate = new System.Windows.Forms.DateTimePicker();
             this.button3 = new System.Windows.Forms.Button();
             this.txtSNO = new System.Windows.Forms.TextBox();
             this.txtlistbox = new System.Windows.Forms.ListBox();
             this.listBoxBillingSearch = new System.Windows.Forms.ListBox();
             this.button4 = new System.Windows.Forms.Button();
+            this.button5 = new System.Windows.Forms.Button();
+            this.button2 = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvItems)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxArray1)).BeginInit();
             this.SuspendLayout();
             // 
             // dgvItems
             // 
-            dataGridViewCellStyle7.BackColor = System.Drawing.Color.LightGray;
-            this.dgvItems.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle7;
+            dataGridViewCellStyle3.BackColor = System.Drawing.Color.LightGray;
+            this.dgvItems.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
             this.dgvItems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvItems.BackgroundColor = System.Drawing.Color.White;
@@ -547,16 +548,6 @@ namespace ProductCRMAPI
             this.cmbUnit.Size = new System.Drawing.Size(100, 28);
             this.cmbUnit.TabIndex = 37;
             // 
-            // button2
-            // 
-            this.button2.Image = global::ProductCRMAPI.Properties.Resources.print;
-            this.button2.Location = new System.Drawing.Point(609, 583);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(114, 35);
-            this.button2.TabIndex = 38;
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
-            // 
             // txtInvoiceDate
             // 
             this.txtInvoiceDate.BackColor = System.Drawing.Color.White;
@@ -572,13 +563,13 @@ namespace ProductCRMAPI
             // 
             // button3
             // 
-            this.button3.Location = new System.Drawing.Point(745, 583);
-            this.button3.MaximumSize = new System.Drawing.Size(104, 35);
-            this.button3.MinimumSize = new System.Drawing.Size(104, 35);
+            this.button3.Location = new System.Drawing.Point(589, 583);
+            this.button3.MaximumSize = new System.Drawing.Size(120, 37);
+            this.button3.MinimumSize = new System.Drawing.Size(120, 37);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(104, 35);
+            this.button3.Size = new System.Drawing.Size(120, 37);
             this.button3.TabIndex = 40;
-            this.button3.Text = "Admin";
+            this.button3.Text = "Inventory";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.btnAdmin_Click);
             // 
@@ -617,7 +608,7 @@ namespace ProductCRMAPI
             // 
             // button4
             // 
-            this.button4.Location = new System.Drawing.Point(855, 583);
+            this.button4.Location = new System.Drawing.Point(850, 585);
             this.button4.Name = "button4";
             this.button4.Size = new System.Drawing.Size(103, 35);
             this.button4.TabIndex = 44;
@@ -625,11 +616,32 @@ namespace ProductCRMAPI
             this.button4.UseVisualStyleBackColor = true;
             this.button4.Click += new System.EventHandler(this.btnClear_Click);
             // 
+            // button5
+            // 
+            this.button5.Location = new System.Drawing.Point(730, 585);
+            this.button5.Name = "button5";
+            this.button5.Size = new System.Drawing.Size(106, 35);
+            this.button5.TabIndex = 45;
+            this.button5.Text = "Billing";
+            this.button5.UseVisualStyleBackColor = true;
+            this.button5.Click += new System.EventHandler(this.btnBillingUsers_Click);
+            // 
+            // button2
+            // 
+            this.button2.Image = global::ProductCRMAPI.Properties.Resources.print;
+            this.button2.Location = new System.Drawing.Point(453, 583);
+            this.button2.Name = "button2";
+            this.button2.Size = new System.Drawing.Size(114, 35);
+            this.button2.TabIndex = 38;
+            this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.btnPrint_Click);
+            // 
             // Form1
             // 
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1787, 1044);
+            this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.listBoxBillingSearch);
             this.Controls.Add(this.txtlistbox);
@@ -727,6 +739,7 @@ namespace ProductCRMAPI
         private ListBox txtlistbox;
         private ListBox listBoxBillingSearch;
         private Button button4;
+        private Button button5;
     }
 }
 
