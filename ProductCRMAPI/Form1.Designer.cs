@@ -586,7 +586,7 @@ namespace ProductCRMAPI
             this.txtlistbox.BackColor = System.Drawing.Color.White;
             this.txtlistbox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtlistbox.Font = new System.Drawing.Font("Segoe UI", 12F);
-            this.txtlistbox.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(155)))), ((int)(((byte)(122)))), ((int)(((byte)(217)))));
+            this.txtlistbox.ForeColor = System.Drawing.Color.Black;
             this.txtlistbox.FormattingEnabled = true;
             this.txtlistbox.IntegralHeight = false;
             this.txtlistbox.ItemHeight = 32;
