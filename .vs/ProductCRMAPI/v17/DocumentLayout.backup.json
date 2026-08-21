@@ -1,26 +1,38 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\G42055\\Desktop\\product_crm_api\\",
+  "WorkspaceRootPath": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|c:\\users\\g42055\\desktop\\product_crm_api\\productcrmapi\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|solutionrelative:productcrmapi\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|c:\\users\\g42055\\desktop\\product_crm_api\\product_crm_api\\productcrmapi\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|solutionrelative:productcrmapi\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|C:\\Users\\G42055\\Desktop\\product_crm_api\\productcrmapi\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|c:\\users\\g42055\\desktop\\product_crm_api\\product_crm_api\\productcrmapi\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|solutionrelative:productcrmapi\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|c:\\users\\g42055\\desktop\\product_crm_api\\productcrmapi\\admin\\inventory.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|solutionrelative:productcrmapi\\admin\\inventory.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|c:\\users\\g42055\\desktop\\product_crm_api\\product_crm_api\\productcrmapi\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|solutionrelative:productcrmapi\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|c:\\users\\g42055\\desktop\\product_crm_api\\productcrmapi\\admin\\inventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|c:\\users\\g42055\\desktop\\product_crm_api\\product_crm_api\\productcrmapi\\admin\\billingusers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|solutionrelative:productcrmapi\\admin\\billingusers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|c:\\users\\g42055\\desktop\\product_crm_api\\product_crm_api\\productcrmapi\\admin\\billingusers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|solutionrelative:productcrmapi\\admin\\billingusers.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\productcrmapi\\admin\\inventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|solutionrelative:productcrmapi\\admin\\inventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\productcrmapi\\admin\\inventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
       "RelativeMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|solutionrelative:productcrmapi\\admin\\inventory.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|c:\\users\\g42055\\desktop\\product_crm_api\\productcrmapi\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|solutionrelative:productcrmapi\\form1.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\productcrmapi\\admin\\inventory.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{03280B27-71E7-4450-A1F9-F22F970F880F}|ProductCRMAPI\\ProductCRMAPI.csproj|solutionrelative:productcrmapi\\admin\\inventory.designer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,7 +42,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 21,
+          "SelectedChildIndex": 18,
           "Children": [
             {
               "$type": "Bookmark",
@@ -106,11 +118,87 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Form1.Designer.cs",
+              "RelativeDocumentMoniker": "ProductCRMAPI\\Form1.Designer.cs",
+              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Form1.Designer.cs",
+              "RelativeToolTip": "ProductCRMAPI\\Form1.Designer.cs",
+              "ViewState": "AgIAADYCAAAAAAAAAAAlwEwCAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-21T12:30:30.258Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Inventory.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\ProductCRMAPI\\Admin\\Inventory.cs",
+              "Title": "BillingUsers.cs",
+              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Admin\\BillingUsers.cs",
+              "RelativeDocumentMoniker": "ProductCRMAPI\\Admin\\BillingUsers.cs",
+              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Admin\\BillingUsers.cs",
+              "RelativeToolTip": "ProductCRMAPI\\Admin\\BillingUsers.cs",
+              "ViewState": "AgIAAMkAAAAAAAAAAAApwNgAAABFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-21T08:54:08.676Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "BillingUsers.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Admin\\BillingUsers.cs",
+              "RelativeDocumentMoniker": "ProductCRMAPI\\Admin\\BillingUsers.cs",
+              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Admin\\BillingUsers.cs [Design]",
+              "RelativeToolTip": "ProductCRMAPI\\Admin\\BillingUsers.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-21T08:48:23.901Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Form1.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Form1.cs",
+              "RelativeDocumentMoniker": "ProductCRMAPI\\Form1.cs",
+              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Form1.cs [Design]",
+              "RelativeToolTip": "ProductCRMAPI\\Form1.cs [Design]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-21T04:14:07.064Z",
+              "EditorCaption": " [Design]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Form1.cs",
+              "RelativeDocumentMoniker": "ProductCRMAPI\\Form1.cs",
+              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Form1.cs",
+              "RelativeToolTip": "ProductCRMAPI\\Form1.cs",
+              "ViewState": "AgIAAC0DAAAAAAAAAAAmwD0DAABRAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-20T10:30:51.799Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "Inventory.cs",
+              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Admin\\Inventory.cs",
               "RelativeDocumentMoniker": "ProductCRMAPI\\Admin\\Inventory.cs",
-              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\ProductCRMAPI\\Admin\\Inventory.cs [Design]",
+              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Admin\\Inventory.cs",
+              "RelativeToolTip": "ProductCRMAPI\\Admin\\Inventory.cs",
+              "ViewState": "AgIAADoAAAAAAAAAAAAgwEgAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-08-19T08:44:45.546Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "Inventory.cs [Design]",
+              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Admin\\Inventory.cs",
+              "RelativeDocumentMoniker": "ProductCRMAPI\\Admin\\Inventory.cs",
+              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Admin\\Inventory.cs [Design]",
               "RelativeToolTip": "ProductCRMAPI\\Admin\\Inventory.cs [Design]",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-18T16:25:25.493Z",
@@ -118,54 +206,16 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 7,
               "Title": "Inventory.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\ProductCRMAPI\\Admin\\Inventory.Designer.cs",
+              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Admin\\Inventory.Designer.cs",
               "RelativeDocumentMoniker": "ProductCRMAPI\\Admin\\Inventory.Designer.cs",
-              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\ProductCRMAPI\\Admin\\Inventory.Designer.cs",
+              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\product_crm_api\\ProductCRMAPI\\Admin\\Inventory.Designer.cs",
               "RelativeToolTip": "ProductCRMAPI\\Admin\\Inventory.Designer.cs",
-              "ViewState": "AgIAAKoBAAAAAAAAAAAlwPcAAABVAAAAAAAAAA==",
+              "ViewState": "AgIAABoAAAAAAAAAAAAAwDYAAAA7AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-08-18T16:25:18.507Z",
               "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "Form1.Designer.cs",
-              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\ProductCRMAPI\\Form1.Designer.cs",
-              "RelativeDocumentMoniker": "ProductCRMAPI\\Form1.Designer.cs",
-              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\ProductCRMAPI\\Form1.Designer.cs",
-              "RelativeToolTip": "ProductCRMAPI\\Form1.Designer.cs",
-              "ViewState": "AgIAAD4AAAAAAAAAAAAmwE4AAABTAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-18T12:47:31.382Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "Form1.cs",
-              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\ProductCRMAPI\\Form1.cs",
-              "RelativeDocumentMoniker": "ProductCRMAPI\\Form1.cs",
-              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\ProductCRMAPI\\Form1.cs",
-              "RelativeToolTip": "ProductCRMAPI\\Form1.cs",
-              "ViewState": "AgIAANsAAAAAAAAAAAAUwOsAAAAoAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-18T10:51:34.009Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Form1.cs [Design]",
-              "DocumentMoniker": "C:\\Users\\G42055\\Desktop\\product_crm_api\\ProductCRMAPI\\Form1.cs",
-              "RelativeDocumentMoniker": "ProductCRMAPI\\Form1.cs",
-              "ToolTip": "C:\\Users\\G42055\\Desktop\\product_crm_api\\ProductCRMAPI\\Form1.cs [Design]",
-              "RelativeToolTip": "ProductCRMAPI\\Form1.cs [Design]",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-08-18T10:51:28.046Z",
-              "EditorCaption": " [Design]"
             }
           ]
         }

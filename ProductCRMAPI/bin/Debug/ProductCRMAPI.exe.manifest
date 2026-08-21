@@ -90,14 +90,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ProductCRMAPI.exe" size="45984">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="ProductCRMAPI.exe" size="62368">
       <assemblyIdentity name="ProductCRMAPI" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>F9mX8NkvPVF7V86g8bOwa+dRycqwAfHJBgeEQ0Glch8=</dsig:DigestValue>
+        <dsig:DigestValue>qxm+SXpYl6mq1AWi7fY8xFCZ9vGHF+D3UL0WSTP4O6Q=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -204,6 +204,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>bZq3Lyn8s+/hrbaY9xZ/eCUZbyhB10jbLD+ZlLef1mo=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Uploads\Invoices.xlsx" size="8653">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>Z7ivv4znPOsKPn2RanFPBpgusKduY05IGJPhk+BuGZw=</dsig:DigestValue>
     </hash>
   </file>
 </asmv1:assembly>

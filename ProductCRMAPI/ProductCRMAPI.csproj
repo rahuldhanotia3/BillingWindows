@@ -124,6 +124,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Admin\BillingUsers.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Admin\BillingUsers.Designer.cs">
+      <DependentUpon>BillingUsers.cs</DependentUpon>
+    </Compile>
     <Compile Include="Admin\Inventory.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -138,6 +144,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="Admin\BillingUsers.resx">
+      <DependentUpon>BillingUsers.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Admin\Inventory.resx">
       <DependentUpon>Inventory.cs</DependentUpon>
     </EmbeddedResource>
@@ -165,6 +174,9 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Content Include="Uploads\Invoices.xlsx">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
