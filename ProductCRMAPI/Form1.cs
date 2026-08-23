@@ -142,7 +142,8 @@ namespace ProductCRMAPI
 
             decimal gstAmt = taxableAmount * gst / 100;
 
-            decimal finalAmount = taxableAmount + gstAmt;
+            //decimal finalAmount = taxableAmount + gstAmt;
+            decimal finalAmount = taxableAmount;
 
             int QtyCheck = Convert.ToInt32(txtQty.Text);
 
@@ -185,7 +186,8 @@ namespace ProductCRMAPI
 
             decimal gstAmt = taxableAmount * gst / 100;
 
-            decimal finalAmount = taxableAmount + gstAmt;
+            //decimal finalAmount = taxableAmount + gstAmt;
+            decimal finalAmount = taxableAmount;
 
             txtAmount.Text = finalAmount.ToString("0.00");
         }
@@ -392,9 +394,9 @@ namespace ProductCRMAPI
                         txtHSN.Text = sheet.Cells[i, 3].Text;
                         cmbUnit.SelectedItem = sheet.Cells[i, 4].Text;
                         txtAvailableQty.Text = sheet.Cells[i, 5].Text;
-                        txtPrice.Text = sheet.Cells[i, 6].Text;
+                        txtPrice.Text = sheet.Cells[i, 8].Text;
                         //txtSPrice.Text = sheet.Cells[i, 6].Text;
-                        txtGST.Text = sheet.Cells[i, 8].Text;
+                        txtGST.Text = sheet.Cells[i, 9].Text;
                         break;
                     }
                 }
@@ -424,7 +426,7 @@ namespace ProductCRMAPI
                 {
                     string itemName = sheet.Cells[i, 2].Text;
 
-                    if (itemName.ToLower().Contains(searchText))
+                    if (itemName.ToLower().Contains(searchText.ToLower()))
                     {
                         txtlistbox.Items.Add(itemName.ToUpper());
                     }
