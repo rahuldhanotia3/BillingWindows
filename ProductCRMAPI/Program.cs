@@ -15,7 +15,6 @@ namespace ProductCRMAPI
         [STAThread]
         static void Main()
         {
-            QuestPDF.Settings.License = LicenseType.Community;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());

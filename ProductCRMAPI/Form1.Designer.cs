@@ -76,6 +76,8 @@ namespace ProductCRMAPI
             this.button4 = new System.Windows.Forms.Button();
             this.button5 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
+            this.txtAvailableQty = new System.Windows.Forms.TextBox();
+            this.label17 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvItems)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxArray1)).BeginInit();
             this.SuspendLayout();
@@ -323,7 +325,7 @@ namespace ProductCRMAPI
             this.button1.BackColor = System.Drawing.Color.White;
             this.button1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button1.ForeColor = System.Drawing.Color.Black;
-            this.button1.Location = new System.Drawing.Point(1164, 361);
+            this.button1.Location = new System.Drawing.Point(1169, 361);
             this.button1.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.button1.MaximumSize = new System.Drawing.Size(58, 30);
             this.button1.MinimumSize = new System.Drawing.Size(58, 30);
@@ -636,11 +638,33 @@ namespace ProductCRMAPI
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.btnPrint_Click);
             // 
+            // txtAvailableQty
+            // 
+            this.txtAvailableQty.Enabled = false;
+            this.txtAvailableQty.Location = new System.Drawing.Point(461, 410);
+            this.txtAvailableQty.MaximumSize = new System.Drawing.Size(90, 30);
+            this.txtAvailableQty.MinimumSize = new System.Drawing.Size(90, 30);
+            this.txtAvailableQty.Name = "txtAvailableQty";
+            this.txtAvailableQty.Size = new System.Drawing.Size(90, 30);
+            this.txtAvailableQty.TabIndex = 46;
+            // 
+            // label17
+            // 
+            this.label17.AutoSize = true;
+            this.label17.Font = new System.Drawing.Font("Microsoft Sans Serif", 7F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label17.Location = new System.Drawing.Point(460, 393);
+            this.label17.Name = "label17";
+            this.label17.Size = new System.Drawing.Size(89, 17);
+            this.label17.TabIndex = 47;
+            this.label17.Text = "Available : ";
+            // 
             // Form1
             // 
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1787, 1044);
+            this.Controls.Add(this.label17);
+            this.Controls.Add(this.txtAvailableQty);
             this.Controls.Add(this.button5);
             this.Controls.Add(this.button4);
             this.Controls.Add(this.listBoxBillingSearch);
@@ -740,6 +764,8 @@ namespace ProductCRMAPI
         private ListBox listBoxBillingSearch;
         private Button button4;
         private Button button5;
+        private TextBox txtAvailableQty;
+        private Label label17;
     }
 }
 

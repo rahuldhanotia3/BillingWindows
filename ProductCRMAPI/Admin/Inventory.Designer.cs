@@ -98,7 +98,6 @@ namespace ProductCRMAPI
             this.dgvInventory.RowTemplate.Height = 20;
             this.dgvInventory.Size = new System.Drawing.Size(1759, 242);
             this.dgvInventory.TabIndex = 0;
-            this.dgvInventory.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.btnAddUpdate_Click);
             // 
             // ItemName
             // 

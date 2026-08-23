@@ -37,7 +37,7 @@ namespace ProductCRMAPI
         decimal Received = 0;
         decimal Balance = 0;
         decimal Saved = 0;
-        string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Invoice.xlsx");
+        string excelFile = @"D://Uploads//Invoice.xlsx";
         Dictionary<string, string> productList = new Dictionary<string, string>();
         public BillingUsers()
         {
@@ -54,6 +54,7 @@ namespace ProductCRMAPI
             InitializeInvoiceGrid();
             LoadUsers();
             listBoxBillingSearch.MouseClick += listBoxBilling_Click;
+            txtBillTo.Leave += txtListBox_LeaveClick;
         }
         private void InitializeInvoiceGrid()
         {
@@ -276,7 +277,10 @@ namespace ProductCRMAPI
             txtState.Clear();
             txtInvoiceNo.Clear();
         }
-
+        private void txtListBox_LeaveClick(object sender, EventArgs e)
+        {
+            listBoxBillingSearch.Visible = false;
+        }
         private void UpdateItem()
         {
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");

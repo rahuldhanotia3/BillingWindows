@@ -28,7 +28,7 @@ namespace ProductCRMAPI
 {
     public partial class Inventory : Form
     {
-        string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Inventory.xlsx");
+        string excelFile = @"D://Uploads//Inventory.xlsx";
         public Inventory()
         {
             InitializeComponent();
@@ -46,6 +46,7 @@ namespace ProductCRMAPI
             txtItemName.KeyUp += txtItemName_KeyUp;
             txtItemName.KeyDown += listBoxItems_KeyDown;
             listboxItem.MouseClick += listBoxItems_Click;
+            txtItemName.Leave += txtListBox_LeaveClick;
         }
         private void LoadInventory()
         {
@@ -86,7 +87,7 @@ namespace ProductCRMAPI
             if (File.Exists(excelFile))
                 return;
 
-            ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
+            ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
             using (var package = new ExcelPackage())
             {
@@ -258,6 +259,10 @@ namespace ProductCRMAPI
                     listboxItem.Visible = false;
                 }
             }
+        }
+        private void txtListBox_LeaveClick(object sender, EventArgs e)
+        {
+            listboxItem.Visible = false;
         }
     }
 }

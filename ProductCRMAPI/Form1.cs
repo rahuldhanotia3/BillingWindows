@@ -36,7 +36,7 @@ namespace ProductCRMAPI
         decimal Received = 0;
         decimal Balance = 0;
         decimal Saved = 0;
-        string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Invoice.xlsx");
+        string excelFile = @"D://Uploads//Invoice.xlsx";
         Dictionary<string, string> productList = new Dictionary<string, string>();
         public Form1()
         {
@@ -77,6 +77,8 @@ namespace ProductCRMAPI
             listBoxBillingSearch.MouseClick += listBoxBilling_Click;
             txtItemName.KeyUp += txtItemName_KeyUp;
             txtlistbox.MouseClick += listBoxItems_Click;
+            txtBillTo.Leave += txtListBox_LeaveClick;
+            txtItemName.Leave += txtListBox_LeaveClick;
         }
         private void InitializeInvoiceGrid()
         {
@@ -141,6 +143,14 @@ namespace ProductCRMAPI
             decimal gstAmt = taxableAmount * gst / 100;
 
             decimal finalAmount = taxableAmount + gstAmt;
+
+            int QtyCheck = Convert.ToInt32(txtQty.Text);
+
+            if(QtyCheck > Convert.ToInt32(txtAvailableQty.Text))
+            {
+                MessageBox.Show("You don't have enough quantity!", "Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             dgvItems.Rows.Add(
                 txtItemName.Text,
@@ -364,7 +374,7 @@ namespace ProductCRMAPI
         }
         private void FetchItemDetails(string itemName)
         {
-            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Inventory.xlsx");
+            string excelFile = @"D://Uploads//Inventory.xlsx";
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
             using (var package = new ExcelPackage(new FileInfo(excelFile)))
@@ -381,7 +391,7 @@ namespace ProductCRMAPI
                         txtItemName.Text = sheet.Cells[i, 2].Text;
                         txtHSN.Text = sheet.Cells[i, 3].Text;
                         cmbUnit.SelectedItem = sheet.Cells[i, 4].Text;
-                        txtQty.Text = sheet.Cells[i, 5].Text;
+                        txtAvailableQty.Text = sheet.Cells[i, 5].Text;
                         txtPrice.Text = sheet.Cells[i, 6].Text;
                         //txtSPrice.Text = sheet.Cells[i, 6].Text;
                         txtGST.Text = sheet.Cells[i, 8].Text;
@@ -392,7 +402,7 @@ namespace ProductCRMAPI
         }
         private void txtItemName_KeyUp(object sender, KeyEventArgs e)
         {
-            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Inventory.xlsx");
+            string excelFile = @"D://Uploads//Inventory.xlsx";
             txtlistbox.Items.Clear();
 
             string searchText = txtItemName.Text.Trim().ToLower();
@@ -459,7 +469,7 @@ namespace ProductCRMAPI
         }
         private string GenerateInvoiceNumber()
         {
-            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Invoice.xlsx");
+            string excelFile = @"D://Uploads//Invoice.xlsx";
             int nextNumber = 1;
 
             if (File.Exists(excelFile))
@@ -498,7 +508,7 @@ namespace ProductCRMAPI
         private void btnAddUpdate_Click()
         {
             //CreateExcelIfNotExists();
-            string excelFile = Path.Combine(Application.StartupPath,"Uploads","Invoice.xlsx");
+            string excelFile = @"D://Uploads//Invoice.xlsx";
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
             using (var package = new ExcelPackage(new FileInfo(excelFile)))
@@ -522,7 +532,7 @@ namespace ProductCRMAPI
         }
         private void FetchBillingDetails(string itemName)
         {
-            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Invoice.xlsx");
+            string excelFile = @"D://Uploads//Invoice.xlsx";
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
             using (var package = new ExcelPackage(new FileInfo(excelFile)))
@@ -553,8 +563,8 @@ namespace ProductCRMAPI
         }
         private void txtBillTo_KeyUp(object sender, KeyEventArgs e)
         {
-            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Invoice.xlsx");
-
+            
+            string excelFile = @"D://Uploads//Invoice.xlsx";
             listBoxBillingSearch.Items.Clear();
 
             string searchText = txtBillTo.Text.Trim().ToLower();
@@ -577,12 +587,13 @@ namespace ProductCRMAPI
                 for (int i = 2; i <= rows; i++)
                 {
                     string itemName = sheet.Cells[i, 3].Text.Trim();
+                    string address = sheet.Cells[i, 7].Text.Trim();
 
                     if (itemName.ToLower().Contains(searchText))
                     {
                         if (uniqueItems.Add(itemName))
                         {
-                            listBoxBillingSearch.Items.Add(itemName);
+                            listBoxBillingSearch.Items.Add(itemName + " : "+ address);//7 Place Of Supply
                         }
                     }
                     if (itemName.Equals(searchText, StringComparison.OrdinalIgnoreCase))
@@ -607,11 +618,19 @@ namespace ProductCRMAPI
         {
             if (listBoxBillingSearch.SelectedItem != null)
             {
-                txtBillTo.Text = listBoxBillingSearch.SelectedItem.ToString();
+                string[] parts = listBoxBillingSearch.SelectedItem.ToString().Split(':');
 
-                FetchBillingDetails(txtBillTo.Text.ToUpper());
+                if (parts.Length >= 2)
+                {
+                    string firstName = parts[0].Trim();
+                    string secAddress = parts[1].Trim();
 
-                listBoxBillingSearch.Visible = false;
+                    txtBillTo.Text = firstName;
+
+                    FetchBillingDetails(firstName);
+
+                    listBoxBillingSearch.Visible = false;
+                }
             }
         }
         private void listBoxBilling_KeyDown(object sender, KeyEventArgs e)
@@ -636,6 +655,7 @@ namespace ProductCRMAPI
             txtGSTINNumber.Clear();
             txtPOS.Clear();
             txtState.Clear();
+            txtAvailableQty.Clear();
             txtInvoiceNo.Text = GenerateInvoiceNumber();
             dgvItems.Rows.Clear();
             ClearItemFields();
@@ -644,7 +664,7 @@ namespace ProductCRMAPI
         private void UpdateItem()
         {
 
-            string excelFile = Path.Combine(Application.StartupPath, "Uploads", "Inventory.xlsx");
+            string excelFile = @"D://Uploads//Inventory.xlsx";
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
             using (var package = new ExcelPackage(new FileInfo(excelFile)))
@@ -900,6 +920,11 @@ namespace ProductCRMAPI
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
+        }
+        private void txtListBox_LeaveClick(object sender, EventArgs e)
+        {
+            listBoxBillingSearch.Visible = false;
+            txtlistbox.Visible = false;
         }
     }
 }
