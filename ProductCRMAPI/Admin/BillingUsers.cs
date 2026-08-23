@@ -54,7 +54,7 @@ namespace ProductCRMAPI
             InitializeInvoiceGrid();
             LoadUsers();
             listBoxBillingSearch.MouseClick += listBoxBilling_Click;
-            txtBillTo.Leave += txtListBox_LeaveClick;
+            //txtBillTo.Leave += txtListBox_LeaveClick;
         }
         private void InitializeInvoiceGrid()
         {

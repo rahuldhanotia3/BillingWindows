@@ -46,7 +46,7 @@ namespace ProductCRMAPI
             txtItemName.KeyUp += txtItemName_KeyUp;
             txtItemName.KeyDown += listBoxItems_KeyDown;
             listboxItem.MouseClick += listBoxItems_Click;
-            txtItemName.Leave += txtListBox_LeaveClick;
+            //txtItemName.Leave += txtListBox_LeaveClick;
         }
         private void LoadInventory()
         {

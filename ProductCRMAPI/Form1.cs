@@ -77,8 +77,8 @@ namespace ProductCRMAPI
             listBoxBillingSearch.MouseClick += listBoxBilling_Click;
             txtItemName.KeyUp += txtItemName_KeyUp;
             txtlistbox.MouseClick += listBoxItems_Click;
-            txtBillTo.Leave += txtListBox_LeaveClick;
-            txtItemName.Leave += txtListBox_LeaveClick;
+            //txtBillTo.Leave += txtListBox_LeaveClick;
+            //txtItemName.Leave += txtListBox_LeaveClick;
         }
         private void InitializeInvoiceGrid()
         {
@@ -141,6 +141,8 @@ namespace ProductCRMAPI
             decimal taxableAmount = baseAmount - discountAmt;
 
             decimal gstAmt = taxableAmount * gst / 100;
+
+            price = baseAmount - gstAmt;
 
             //decimal finalAmount = taxableAmount + gstAmt;
             decimal finalAmount = taxableAmount;
@@ -770,7 +772,7 @@ namespace ProductCRMAPI
                                 header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Qty");
                                 header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Unit");
                                 header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Rate");
-                                if (TotalDiscount > 0)
+                                //if (TotalDiscount > 0)
                                     header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Discount %");
                                 header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("GST %");
                                 header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Amount");
@@ -796,11 +798,13 @@ namespace ProductCRMAPI
                                 table.Cell().Border(1).Padding(3)
                                     .Text(row.Cells["txtPrice"].Value?.ToString() ?? "");
 
-                                if (TotalDiscount > 0)
+                                if (TotalDiscount < 0)
+                                    table.Cell().Border(1).Padding(3).Text("");
+                                else
                                     table.Cell().Border(1).Padding(3).Text(row.Cells["txtDiscount"].Value?.ToString() ?? "");
 
                                 table.Cell().Border(1).Padding(3)
-                                    .Text(row.Cells["txtGST"].Value?.ToString() ?? "");
+                                        .Text(row.Cells["txtGST"].Value?.ToString() ?? "");
 
                                 table.Cell().Border(1).Padding(3)
                                     .Text(row.Cells["txtAmount"].Value?.ToString() ?? "");
