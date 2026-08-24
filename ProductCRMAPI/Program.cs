@@ -17,6 +17,14 @@ namespace ProductCRMAPI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            if (DateTime.Now.DayOfWeek == DayOfWeek.Saturday)
+            {
+                using (SaturdayPopup popup = new SaturdayPopup())
+                {
+                    popup.StartPosition = FormStartPosition.CenterScreen;
+                    popup.ShowDialog();
+                }
+            }
             Application.Run(new Form1());
         }
     }

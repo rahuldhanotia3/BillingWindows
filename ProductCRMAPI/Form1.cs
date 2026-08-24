@@ -77,7 +77,8 @@ namespace ProductCRMAPI
             listBoxBillingSearch.MouseClick += listBoxBilling_Click;
             txtItemName.KeyUp += txtItemName_KeyUp;
             txtlistbox.MouseClick += listBoxItems_Click;
-            //txtBillTo.Leave += txtListBox_LeaveClick;
+            txtBillTo.Leave += txtBillTo_Leave;
+            listBoxBillingSearch.MouseDown += listBoxBillingSearch_MouseDown;
             //txtItemName.Leave += txtListBox_LeaveClick;
         }
         private void InitializeInvoiceGrid()
@@ -142,7 +143,9 @@ namespace ProductCRMAPI
 
             decimal gstAmt = taxableAmount * gst / 100;
 
-            price = baseAmount - gstAmt;
+            decimal gstMultiplier = 1 + (gst / 100);
+
+            price = taxableAmount / gstMultiplier;
 
             //decimal finalAmount = taxableAmount + gstAmt;
             decimal finalAmount = taxableAmount;
@@ -160,7 +163,7 @@ namespace ProductCRMAPI
                 txtHSN.Text,
                 qty,
                 cmbUnit.Text,
-                price,
+                price.ToString("0.00"),
                 discount == 0m ? "" : discount.ToString("0.##"),
                 gst,
                 finalAmount
@@ -297,10 +300,12 @@ namespace ProductCRMAPI
                     MessageBoxIcon.Error);
             }
         }
-        public static string ConvertAmountToWords(decimal amount)
+        public static string ConvertAmountToWords(string amount)
         {
-            long rupees = (long)Math.Floor(amount);
-            int paise = (int)((amount - rupees) * 100);
+            decimal finalTotal = Math.Floor(Convert.ToDecimal(amount) * 100) / 100;
+
+            long rupees = (long)Math.Floor(finalTotal);
+            int paise = (int)((finalTotal - rupees) * 100);
 
             string result = "Rupees " + NumberToWords(rupees);
 
@@ -567,13 +572,18 @@ namespace ProductCRMAPI
         }
         private void txtBillTo_KeyUp(object sender, KeyEventArgs e)
         {
-            
-            string excelFile = @"D://Uploads//Invoice.xlsx";
+            string excelFile = @"D:\Uploads\Invoice.xlsx";
+
             listBoxBillingSearch.Items.Clear();
 
-            string searchText = txtBillTo.Text.Trim().ToLower();
+            string searchText = txtBillTo.Text.Trim();
 
-            if (string.IsNullOrEmpty(searchText))
+            txtContactNo.Clear();
+            txtGSTINNumber.Clear();
+            txtPOS.Clear();
+            txtState.Clear();
+
+            if (string.IsNullOrWhiteSpace(searchText))
             {
                 listBoxBillingSearch.Visible = false;
                 return;
@@ -586,28 +596,36 @@ namespace ProductCRMAPI
             using (var package = new ExcelPackage(new FileInfo(excelFile)))
             {
                 var sheet = package.Workbook.Worksheets[0];
+
                 int rows = sheet.Dimension.Rows;
                 int lastMatchedRow = -1;
+
                 for (int i = 2; i <= rows; i++)
                 {
                     string itemName = sheet.Cells[i, 3].Text.Trim();
                     string address = sheet.Cells[i, 7].Text.Trim();
 
-                    if (itemName.ToLower().Contains(searchText))
+                    // Search matching names
+                    if (itemName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
                         if (uniqueItems.Add(itemName))
                         {
-                            listBoxBillingSearch.Items.Add(itemName + " : "+ address);//7 Place Of Supply
+                            listBoxBillingSearch.Items.Add(
+                                itemName + " : " + address
+                            );
                         }
                     }
+
+                    // Exact match
                     if (itemName.Equals(searchText, StringComparison.OrdinalIgnoreCase))
                     {
                         lastMatchedRow = i;
                     }
                 }
+
+                // Fill other fields when exact customer is found
                 if (lastMatchedRow > 0)
                 {
-                    txtBillTo.Text = sheet.Cells[lastMatchedRow, 3].Text;
                     txtContactNo.Text = sheet.Cells[lastMatchedRow, 4].Text;
                     txtGSTINNumber.Text = sheet.Cells[lastMatchedRow, 5].Text;
                     txtState.Text = sheet.Cells[lastMatchedRow, 6].Text;
@@ -713,15 +731,15 @@ namespace ProductCRMAPI
                     page.Header().Column(col =>
                     {
                         col.Item().Text("AARAV ENTERPRISES")
-                            .FontSize(22)
+                            .FontSize(13)
                             .Bold();
 
-                        col.Item().Text("Dal Bazar Lashkar, Gwalior");
-                        col.Item().Text("GSTIN : 23CYSPB9884R1Z8");
-                        col.Item().Text("Contact : +91 9977422337");
+                        col.Item().Text("Dal Bazar Lashkar, Gwalior").FontSize(10);
+                        col.Item().Text("GSTIN : 23CYSPB9884R1Z8").FontSize(10);
+                        col.Item().Text("Contact : +91 9977422337").FontSize(10);
                     });
 
-                    page.Content().PaddingVertical(15).Column(col =>
+                    page.Content().PaddingVertical(12).Column(col =>
                     {
                         col.Spacing(10);
 
@@ -731,25 +749,25 @@ namespace ProductCRMAPI
 
                         col.Item().Row(row =>
                         {
-                            row.RelativeItem(4).Border(0).Padding(10).Column(left =>
+                            row.RelativeItem(4).Border(0).Padding(8).Column(left =>
                             {
-                                left.Item().Text("Bill To").Bold();
+                                left.Item().Text("Bill To").FontSize(10).Bold();
 
-                                left.Item().Text(txtBillTo.Text);
-                                left.Item().Text("Contact : " + txtContactNo.Text);
-                                left.Item().Text("GSTIN : " + txtGSTINNumber.Text);
-                                left.Item().Text("State : " + txtState.Text);
+                                left.Item().Text(txtBillTo.Text).FontSize(9);
+                                left.Item().Text("Contact : " + txtContactNo.Text).FontSize(9);
+                                left.Item().Text("GSTIN : " + txtGSTINNumber.Text).FontSize(9);
+                                left.Item().Text("State : " + txtState.Text).FontSize(9);
                             });
 
-                            row.RelativeItem(4).AlignRight().Border(0).Padding(10).Column(right =>
+                            row.RelativeItem(4).AlignRight().Border(0).Padding(8).Column(right =>
                             {
-                                right.Item().Text($"Invoice No : {txtInvoiceNo.Text}");
-                                right.Item().Text($"Invoice Date : {txtInvoiceDate.Value.ToString("dd/MM/yyyy")}");
-                                right.Item().Text($"Place Of Supply : {txtPOS.Text}");
+                                right.Item().Text($"Invoice No : {txtInvoiceNo.Text}").FontSize(9);
+                                right.Item().Text($"Invoice Date : {txtInvoiceDate.Value.ToString("dd/MM/yyyy")}").FontSize(9);
+                                right.Item().Text($"Place Of Supply : {txtPOS.Text}").FontSize(9);
                             });
                         });
 
-                        col.Item().PaddingTop(5);
+                        col.Item().PaddingTop(1);
 
                         col.Item().Table(table =>
                         {
@@ -767,15 +785,15 @@ namespace ProductCRMAPI
 
                             table.Header(header =>
                             {
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Item");
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("HSN");
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Qty");
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Unit");
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Rate");
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Item").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("HSN").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Qty").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Unit").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Rate").FontSize(10);
                                 //if (TotalDiscount > 0)
-                                    header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Discount %");
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("GST %");
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Amount");
+                                    header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Discount %").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("GST %").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Amount").FontSize(10);
                             });
 
                             foreach (DataGridViewRow row in dgvItems.Rows)
@@ -784,38 +802,42 @@ namespace ProductCRMAPI
                                     continue;
 
                                 table.Cell().Border(1).Padding(3)
-                                    .Text(row.Cells["txtItemName"].Value?.ToString() ?? "");
+                                    .Text(row.Cells["txtItemName"].Value?.ToString() ?? "").FontSize(8);
 
                                 table.Cell().Border(1).Padding(3)
-                                    .Text(row.Cells["txtHSN"].Value?.ToString() ?? "");
+                                    .Text(row.Cells["txtHSN"].Value?.ToString() ?? "").FontSize(8);
 
                                 table.Cell().Border(1).Padding(3)
-                                    .Text(row.Cells["txtQty"].Value?.ToString() ?? "");
+                                    .Text(row.Cells["txtQty"].Value?.ToString() ?? "").FontSize(8);
 
                                 table.Cell().Border(1).Padding(3)
-                                    .Text(row.Cells["txtUnit"].Value?.ToString() ?? "");
+                                    .Text(row.Cells["txtUnit"].Value?.ToString() ?? "").FontSize(8);
 
                                 table.Cell().Border(1).Padding(3)
-                                    .Text(row.Cells["txtPrice"].Value?.ToString() ?? "");
+                                    .Text(Convert.ToDecimal(row.Cells["txtPrice"].Value ?? 0).ToString("0.00")).FontSize(8);
 
                                 if (TotalDiscount < 0)
-                                    table.Cell().Border(1).Padding(3).Text("");
+                                    table.Cell().Border(1).Padding(3).Text("").FontSize(8);
                                 else
-                                    table.Cell().Border(1).Padding(3).Text(row.Cells["txtDiscount"].Value?.ToString() ?? "");
+                                    table.Cell().Border(1).Padding(3).Text(row.Cells["txtDiscount"].Value?.ToString() ?? "").FontSize(8);
 
                                 table.Cell().Border(1).Padding(3)
-                                        .Text(row.Cells["txtGST"].Value?.ToString() ?? "");
+                                        .Text(row.Cells["txtGST"].Value?.ToString() ?? "").FontSize(8);
 
                                 table.Cell().Border(1).Padding(3)
-                                    .Text(row.Cells["txtAmount"].Value?.ToString() ?? "");
-
-                                productList.Add(row.Cells["txtItemName"].Value.ToString(), row.Cells["txtQty"].Value.ToString());
-
+                                    .Text(row.Cells["txtAmount"].Value?.ToString() ?? "").FontSize(8);
+                                try {
+                                    productList.Add(row.Cells["txtItemName"].Value.ToString(), row.Cells["txtQty"].Value.ToString());
+                                }
+                                catch (Exception ex)
+                                {
+                                    MessageBox.Show("Item already exists!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                }
                             }
                         });
-
-                        string ttlAmt = ConvertAmountToWords(Total);
-                        col.Item().PaddingTop(5);
+                        decimal finalTotal = Math.Floor(Total * 100) / 100;
+                        string ttlAmt = ConvertAmountToWords(finalTotal.ToString("0.00"));
+                        col.Item().PaddingTop(2);
 
                         col.Item().Row(mainRow =>
                         {
@@ -838,16 +860,16 @@ namespace ProductCRMAPI
                                 {
                                     summary.Item().Row(row =>
                                     {
-                                        row.ConstantItem(80)
-                                           .Text(title)
+                                        row.ConstantItem(60)
+                                           .Text(title).FontSize(10)
                                            .Bold();
 
-                                        row.ConstantItem(60)
+                                        row.ConstantItem(40)
                                            .AlignRight()
-                                           .Text(value);
+                                           .Text(value).FontSize(10);
                                     });
                                 }
-
+                                decimal finalTotal1 = Math.Floor(Total * 100) / 100;
                                 AddRow("Sub Total", SubTotal.ToString("0.00"));
 
                                 if (TotalDiscount > 0)
@@ -855,12 +877,12 @@ namespace ProductCRMAPI
 
                                 AddRow("Total SGST", TotalSGST.ToString("0.00"));
                                 AddRow("Total CGST", TotalCGST.ToString("0.00"));
-                                AddRow("Total", Total.ToString("0.00"));
+                                AddRow("Total", finalTotal1.ToString("0.00"));
                                 AddRow("You Saved", Saved.ToString("0.00"));
                             });
                         });
 
-                        col.Item().PaddingTop(15);
+                        col.Item().PaddingTop(12);
 
                         col.Item().Row(row =>
                         {
@@ -888,7 +910,8 @@ namespace ProductCRMAPI
             // Save PDF
             SaveFileDialog saveDialog = new SaveFileDialog();
             saveDialog.Filter = "PDF Files (*.pdf)|*.pdf";
-            saveDialog.FileName = "Invoice_" + txtBillTo.Text + ".pdf";
+            string convertedInvoiceNo = txtInvoiceNo.Text.Replace("/", "_").Replace("-", "_");
+            saveDialog.FileName = "Invoice_" + convertedInvoiceNo + ".pdf";
 
             if (saveDialog.ShowDialog() == DialogResult.OK)
             {
@@ -927,10 +950,17 @@ namespace ProductCRMAPI
                     MessageBoxIcon.Error);
             }
         }
-        private void txtListBox_LeaveClick(object sender, EventArgs e)
+        
+        private void txtBillTo_Leave(object sender, EventArgs e)
         {
+            if (listBoxBillingSearch.ContainsFocus)
+                return;
+
             listBoxBillingSearch.Visible = false;
-            txtlistbox.Visible = false;
+        }
+        private void listBoxBillingSearch_MouseDown(object sender, MouseEventArgs e)
+        {
+            listBoxBillingSearch.Focus();
         }
     }
 }
