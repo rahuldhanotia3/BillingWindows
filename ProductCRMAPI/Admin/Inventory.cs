@@ -165,7 +165,7 @@ namespace ProductCRMAPI
                         sheet.Cells[i, 9].Value = textGst.Text;
 
                         package.Save();
-                        ShowMessage("Item already exists!", Color.FromArgb(220, 53, 69));
+                        ShowMessage("Item Updated!", Color.Green);
                         LoadInventory();
                         return;
                     }

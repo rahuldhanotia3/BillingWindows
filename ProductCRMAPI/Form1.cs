@@ -183,22 +183,29 @@ namespace ProductCRMAPI
 
             decimal baseAmount = qty * price;
 
-            decimal discountAmt = baseAmount * discount / 100;
-
-            decimal taxableAmount = baseAmount - discountAmt;
-
-            decimal gstAmt = taxableAmount * gst / 100;
-
             decimal gstMultiplier = 1 + (gst / 100);
 
-            price = taxableAmount / gstMultiplier;
+            price = baseAmount / gstMultiplier;
 
-            //decimal finalAmount = taxableAmount + gstAmt;
-            decimal finalAmount = taxableAmount;
 
+            
+            TotalDiscount += price * discount / 100;
+
+            decimal finalAmount = price - TotalDiscount;
+            SubTotal += finalAmount;
+
+            price = price - TotalDiscount;
+
+            decimal gstAmnt = price * gst / 100;
+
+            TotalCGST += gstAmnt / 2;
+            TotalSGST += gstAmnt / 2;
+
+            finalAmount = Convert.ToDecimal(txtAmount.Text);
             int QtyCheck = Convert.ToInt32(txtQty.Text);
 
-            if(QtyCheck > Convert.ToInt32(txtAvailableQty.Text))
+            Total += finalAmount;
+            if (QtyCheck > Convert.ToInt32(txtAvailableQty.Text))
             {
                 ShowMessage("You don't have enough quantity!", Color.FromArgb(220, 53, 69));
                 return;
@@ -212,7 +219,7 @@ namespace ProductCRMAPI
                 price.ToString("0.00"),
                 discount == 0m ? "" : discount.ToString("0.##"),
                 gst,
-                finalAmount
+                finalAmount.ToString("0.00")
             );
 
             ClearItemFields();
@@ -302,14 +309,12 @@ namespace ProductCRMAPI
                 decimal discount = decimal.TryParse(Convert.ToString(row.Cells["txtDiscount"].Value),out var d)? d: 0;
                 decimal gst = Convert.ToDecimal(row.Cells["txtGST"].Value ?? 0);
 
-                decimal baseAmount = qty * price;
+                decimal discountAmt = price * discount / 100; //2806 * 3 /100
+                TotalDiscount += discountAmt;//84.18
 
-                decimal discountAmt = baseAmount * discount / 100;
-                TotalDiscount += discountAmt;
+                decimal taxableAmount = price - discountAmt;//2806-84
 
-                decimal taxableAmount = baseAmount - discountAmt;
-
-                SubTotal += taxableAmount;
+                SubTotal += taxableAmount; //2722
 
                 decimal sgst = taxableAmount * (gst / 2) / 100;
                 decimal cgst = taxableAmount * (gst / 2) / 100;
@@ -762,7 +767,7 @@ namespace ProductCRMAPI
                 ShowMessage($"At least one item is required", Color.FromArgb(220, 53, 69));
                 return;
             }
-            CalculateSummary();
+            //CalculateSummary();
 
             QuestPDF.Settings.License = LicenseType.Community;
 
@@ -923,7 +928,6 @@ namespace ProductCRMAPI
                                 AddRow("Total SGST", TotalSGST.ToString("0.00"));
                                 AddRow("Total CGST", TotalCGST.ToString("0.00"));
                                 AddRow("Total", finalTotal1.ToString("0.00"));
-                                AddRow("You Saved", Saved.ToString("0.00"));
                             });
                         });
 
