@@ -22,7 +22,11 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 using static QuestPDF.Helpers.Colors;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Button = System.Windows.Forms.Button;
+using Color = System.Drawing.Color;
 using LicenseContext = OfficeOpenXml.LicenseContext;
+using Size = System.Drawing.Size;
+using TextBox = System.Windows.Forms.TextBox;
 
 namespace ProductCRMAPI
 {
@@ -36,7 +40,9 @@ namespace ProductCRMAPI
         decimal Received = 0;
         decimal Balance = 0;
         decimal Saved = 0;
-        string excelFile = @"D://Uploads//Invoice.xlsx";
+        string excelInvoice = ConfigurationManager.AppSettings["excelInvoice"];
+        string excelInventory = ConfigurationManager.AppSettings["excelInventory"];
+
         Dictionary<string, string> productList = new Dictionary<string, string>();
         public Form1()
         {
@@ -80,6 +86,21 @@ namespace ProductCRMAPI
             txtBillTo.Leave += txtBillTo_Leave;
             listBoxBillingSearch.MouseDown += listBoxBillingSearch_MouseDown;
             //txtItemName.Leave += txtListBox_LeaveClick;
+
+            //Validation for numeric
+            txtContactNo.KeyPress += NumericTextBox_KeyPress;
+            txtQty.KeyPress += NumericTextBox_KeyPress;
+            txtPrice.KeyPress += NumericTextBox_KeyPress;
+            txtDiscount.KeyPress += NumericTextBox_KeyPress;
+            txtGST.KeyPress += NumericTextBox_KeyPress;
+            txtAmount.KeyPress += NumericTextBox_KeyPress;
+            //validation for required
+            txtContactNo.Tag = "Required";
+            txtBillTo.Tag = "Required";
+            txtState.Tag = "Required";
+            txtInvoiceDate.Tag = "Required";
+            txtGSTINNumber.Tag = "Required";
+            txtPOS.Tag = "Required";
         }
         private void InitializeInvoiceGrid()
         {
@@ -96,7 +117,32 @@ namespace ProductCRMAPI
 
             dgvItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
-
+        private void NumericTextBox_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!char.IsControl(e.KeyChar) &&
+                !char.IsDigit(e.KeyChar) &&
+                e.KeyChar != '.')
+            {
+                e.Handled = true;
+            }
+        }
+        private bool ValidateRequiredFields()
+        {
+            foreach (Control control in this.Controls)
+            {
+                if (control is TextBox txt &&
+                    txt.Tag?.ToString() == "Required")
+                {
+                    if (string.IsNullOrWhiteSpace(txt.Text))
+                    {
+                        ShowMessage($"{txt.Name} is required", Color.FromArgb(220, 53, 69));
+                        txt.Focus();
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
@@ -154,7 +200,7 @@ namespace ProductCRMAPI
 
             if(QtyCheck > Convert.ToInt32(txtAvailableQty.Text))
             {
-                MessageBox.Show("You don't have enough quantity!", "Failure", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ShowMessage("You don't have enough quantity!", Color.FromArgb(220, 53, 69));
                 return;
             }
 
@@ -383,10 +429,9 @@ namespace ProductCRMAPI
         }
         private void FetchItemDetails(string itemName)
         {
-            string excelFile = @"D://Uploads//Inventory.xlsx";
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInventory)))
             {
                 var sheet = package.Workbook.Worksheets[0];
 
@@ -411,7 +456,6 @@ namespace ProductCRMAPI
         }
         private void txtItemName_KeyUp(object sender, KeyEventArgs e)
         {
-            string excelFile = @"D://Uploads//Inventory.xlsx";
             txtlistbox.Items.Clear();
 
             string searchText = txtItemName.Text.Trim().ToLower();
@@ -424,7 +468,7 @@ namespace ProductCRMAPI
 
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInventory)))
             {
                 var sheet = package.Workbook.Worksheets[0];
                 int rows = sheet.Dimension.Rows;
@@ -478,14 +522,13 @@ namespace ProductCRMAPI
         }
         private string GenerateInvoiceNumber()
         {
-            string excelFile = @"D://Uploads//Invoice.xlsx";
             int nextNumber = 1;
 
-            if (File.Exists(excelFile))
+            if (File.Exists(excelInvoice))
             {
                 ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-                using (var package = new ExcelPackage(new FileInfo(excelFile)))
+                using (var package = new ExcelPackage(new FileInfo(excelInvoice)))
                 {
                     var sheet = package.Workbook.Worksheets[0];
 
@@ -517,10 +560,9 @@ namespace ProductCRMAPI
         private void btnAddUpdate_Click()
         {
             //CreateExcelIfNotExists();
-            string excelFile = @"D://Uploads//Invoice.xlsx";
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInvoice)))
             {
                 var sheet = package.Workbook.Worksheets["Invoice"];
 
@@ -541,10 +583,9 @@ namespace ProductCRMAPI
         }
         private void FetchBillingDetails(string itemName)
         {
-            string excelFile = @"D://Uploads//Invoice.xlsx";
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInvoice)))
             {
                 var sheet = package.Workbook.Worksheets[0];
 
@@ -572,8 +613,6 @@ namespace ProductCRMAPI
         }
         private void txtBillTo_KeyUp(object sender, KeyEventArgs e)
         {
-            string excelFile = @"D:\Uploads\Invoice.xlsx";
-
             listBoxBillingSearch.Items.Clear();
 
             string searchText = txtBillTo.Text.Trim();
@@ -593,7 +632,7 @@ namespace ProductCRMAPI
 
             HashSet<string> uniqueItems = new HashSet<string>();
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInvoice)))
             {
                 var sheet = package.Workbook.Worksheets[0];
 
@@ -686,10 +725,9 @@ namespace ProductCRMAPI
         private void UpdateItem()
         {
 
-            string excelFile = @"D://Uploads//Inventory.xlsx";
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInventory)))
             {
                 var sheet = package.Workbook.Worksheets[0];
 
@@ -717,6 +755,13 @@ namespace ProductCRMAPI
 
         private void btnPrint_Click(object sender, EventArgs e)
         {
+            if (!ValidateRequiredFields())
+                return;
+            if (dgvItems.Rows.Count == 1)
+            {
+                ShowMessage($"At least one item is required", Color.FromArgb(220, 53, 69));
+                return;
+            }
             CalculateSummary();
 
             QuestPDF.Settings.License = LicenseType.Community;
@@ -749,7 +794,7 @@ namespace ProductCRMAPI
 
                         col.Item().Row(row =>
                         {
-                            row.RelativeItem(4).Border(0).Padding(8).Column(left =>
+                            row.RelativeItem(4).Border(0).Padding(2).Column(left =>
                             {
                                 left.Item().Text("Bill To").FontSize(10).Bold();
 
@@ -759,7 +804,7 @@ namespace ProductCRMAPI
                                 left.Item().Text("State : " + txtState.Text).FontSize(9);
                             });
 
-                            row.RelativeItem(4).AlignRight().Border(0).Padding(8).Column(right =>
+                            row.RelativeItem(4).AlignRight().Border(0).Padding(2).Column(right =>
                             {
                                 right.Item().Text($"Invoice No : {txtInvoiceNo.Text}").FontSize(9);
                                 right.Item().Text($"Invoice Date : {txtInvoiceDate.Value.ToString("dd/MM/yyyy")}").FontSize(9);
@@ -785,15 +830,15 @@ namespace ProductCRMAPI
 
                             table.Header(header =>
                             {
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Item").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("HSN").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Qty").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Unit").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Rate").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Item").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("HSN").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Qty").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Unit").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Rate").FontSize(10);
                                 //if (TotalDiscount > 0)
-                                    header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Discount %").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("GST %").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(3).Text("Amount").FontSize(10);
+                                    header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Discount %").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("GST %").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Amount").FontSize(10);
                             });
 
                             foreach (DataGridViewRow row in dgvItems.Rows)
@@ -845,12 +890,12 @@ namespace ProductCRMAPI
                             mainRow.RelativeItem().Column(left =>
                             {
                                 left.Item().Text("Invoice Amount In Words").Bold().FontSize(10);
-                                left.Item().PaddingTop(5);
-                                left.Item().Text(ttlAmt);
-                                left.Item().PaddingTop(5);
+                                left.Item().PaddingTop(3);
+                                left.Item().Text(ttlAmt).FontSize(8);
+                                left.Item().PaddingTop(3);
                                 left.Item().Text("Terms & Conditions").Bold().FontSize(10);
-                                left.Item().PaddingTop(5);
-                                left.Item().Text("Thank you for doing business with us.");
+                                left.Item().PaddingTop(3);
+                                left.Item().Text("Thank you for doing business with us.").FontSize(8);
                             });
 
                             // Right Side
@@ -860,7 +905,7 @@ namespace ProductCRMAPI
                                 {
                                     summary.Item().Row(row =>
                                     {
-                                        row.ConstantItem(60)
+                                        row.ConstantItem(75)
                                            .Text(title).FontSize(10)
                                            .Bold();
 
@@ -961,6 +1006,61 @@ namespace ProductCRMAPI
         private void listBoxBillingSearch_MouseDown(object sender, MouseEventArgs e)
         {
             listBoxBillingSearch.Focus();
+        }
+        private void ShowMessage(string message, Color headerColor)
+        {
+            Form popup = new Form();
+            popup.Size = new Size(350, 170);
+            popup.StartPosition = FormStartPosition.CenterScreen;
+            popup.FormBorderStyle = FormBorderStyle.FixedDialog;
+            popup.Text = "";
+
+            Panel header = new Panel();
+            header.Dock = DockStyle.Top;
+            header.Height = 25;
+            header.BackColor = headerColor;
+
+            // Left Icon
+            PictureBox picLeft = new PictureBox();
+            picLeft.Size = new Size(32, 32);
+            picLeft.Location = new Point(15, 45);
+            picLeft.Image = Properties.Resources.sunday;
+            picLeft.SizeMode = PictureBoxSizeMode.StretchImage;
+
+            // Right Icon
+            PictureBox picRight = new PictureBox();
+            picRight.Size = new Size(32, 32);
+            picRight.Location = new Point(290, 45);
+            picRight.Image = Properties.Resources.sunday;
+            picRight.SizeMode = PictureBoxSizeMode.StretchImage;
+
+            Label lbl = new Label();
+            lbl.Text = message;
+            lbl.Size = new Size(220, 40);
+            lbl.Location = new Point(60, 40);
+            lbl.TextAlign = ContentAlignment.MiddleCenter;
+            lbl.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+
+            Button btn = new Button();
+            btn.Text = "OK";
+            btn.Width = 80;
+            btn.Height = 30;
+            btn.Location = new Point(130, 90);
+
+            btn.BackColor = Color.FromArgb(155, 122, 217);
+            btn.ForeColor = Color.White;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 0;
+
+            btn.Click += (s, e) => popup.Close();
+
+            popup.Controls.Add(header);
+            popup.Controls.Add(picLeft);
+            popup.Controls.Add(picRight);
+            popup.Controls.Add(lbl);
+            popup.Controls.Add(btn);
+
+            popup.ShowDialog();
         }
     }
 }

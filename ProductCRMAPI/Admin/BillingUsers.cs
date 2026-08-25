@@ -29,15 +29,8 @@ namespace ProductCRMAPI
 {
     public partial class BillingUsers : Form
     {
-        decimal SubTotal = 0;
-        decimal TotalDiscount = 0;
-        decimal TotalSGST = 0;
-        decimal TotalCGST = 0;
-        decimal Total = 0;
-        decimal Received = 0;
-        decimal Balance = 0;
-        decimal Saved = 0;
-        string excelFile = @"D://Uploads//Invoice.xlsx";
+        string excelInvoice = ConfigurationManager.AppSettings["excelInvoice"];
+        string excelInventory = ConfigurationManager.AppSettings["excelInventory"];
         Dictionary<string, string> productList = new Dictionary<string, string>();
         public BillingUsers()
         {
@@ -74,11 +67,11 @@ namespace ProductCRMAPI
         {
             dgvUsers.Rows.Clear();
 
-            if (!File.Exists(excelFile))
+            if (!File.Exists(excelInvoice))
                 return;
 
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInvoice)))
             {
                 var sheet = package.Workbook.Worksheets[0];
 
@@ -154,7 +147,7 @@ namespace ProductCRMAPI
             DateTime invoiceDate;
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInvoice)))
             {
                 var sheet = package.Workbook.Worksheets[0];
 
@@ -202,7 +195,7 @@ namespace ProductCRMAPI
 
             HashSet<string> uniqueItems = new HashSet<string>();
             DateTime invoiceDate;
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInvoice)))
             {
                 var sheet = package.Workbook.Worksheets[0];
                 int rows = sheet.Dimension.Rows;
@@ -285,7 +278,7 @@ namespace ProductCRMAPI
         {
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInventory)))
             {
                 var sheet = package.Workbook.Worksheets[0];
 

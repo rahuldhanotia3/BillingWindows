@@ -22,13 +22,17 @@ using System.Windows.Forms;
 using System.Xml.Linq;
 
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+using Button = System.Windows.Forms.Button;
+using Color = System.Drawing.Color;
 using LicenseContext = OfficeOpenXml.LicenseContext;
+using Size = System.Drawing.Size;
 
 namespace ProductCRMAPI
 {
     public partial class Inventory : Form
     {
-        string excelFile = @"D://Uploads//Inventory.xlsx";
+        string excelInvoice = ConfigurationManager.AppSettings["excelInvoice"];
+        string excelInventory = ConfigurationManager.AppSettings["excelInventory"];
         public Inventory()
         {
             InitializeComponent();
@@ -52,11 +56,11 @@ namespace ProductCRMAPI
         {
             dgvInventory.Rows.Clear();
 
-            if (!File.Exists(excelFile))
+            if (!File.Exists(excelInventory))
                 return;
 
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInventory)))
             {
                 var sheet = package.Workbook.Worksheets[0];
 
@@ -84,7 +88,7 @@ namespace ProductCRMAPI
 
         private void CreateExcelIfNotExists()
         {
-            if (File.Exists(excelFile))
+            if (File.Exists(excelInventory))
                 return;
 
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
@@ -103,7 +107,7 @@ namespace ProductCRMAPI
                 sheet.Cells[1, 8].Value = "SalePrice";
                 sheet.Cells[1, 9].Value = "GST";
 
-                package.SaveAs(new FileInfo(excelFile));
+                package.SaveAs(new FileInfo(excelInventory));
             }
         }
 
@@ -113,7 +117,7 @@ namespace ProductCRMAPI
 
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInventory)))
             {
                 var sheet = package.Workbook.Worksheets[0];
 
@@ -141,7 +145,7 @@ namespace ProductCRMAPI
         {
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInventory)))
             {
                 var sheet = package.Workbook.Worksheets[0];
 
@@ -161,8 +165,7 @@ namespace ProductCRMAPI
                         sheet.Cells[i, 9].Value = textGst.Text;
 
                         package.Save();
-
-                        MessageBox.Show("Updated Successfully");
+                        ShowMessage("Item already exists!", Color.FromArgb(220, 53, 69));
                         LoadInventory();
                         return;
                     }
@@ -174,7 +177,7 @@ namespace ProductCRMAPI
         {
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInventory)))
             {
                 var sheet = package.Workbook.Worksheets[0];
 
@@ -217,7 +220,7 @@ namespace ProductCRMAPI
 
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            using (var package = new ExcelPackage(new FileInfo(excelFile)))
+            using (var package = new ExcelPackage(new FileInfo(excelInventory)))
             {
                 var sheet = package.Workbook.Worksheets[0];
                 int rows = sheet.Dimension.Rows;
@@ -263,6 +266,39 @@ namespace ProductCRMAPI
         private void txtListBox_LeaveClick(object sender, EventArgs e)
         {
             listboxItem.Visible = false;
+        }
+        private void ShowMessage(string message, Color headerColor)
+        {
+            Form popup = new Form();
+            popup.Size = new Size(350, 150);
+            popup.StartPosition = FormStartPosition.CenterScreen;
+            popup.FormBorderStyle = FormBorderStyle.FixedDialog;
+            popup.Text = "";
+
+            Panel header = new Panel();
+            header.Dock = DockStyle.Top;
+            header.Height = 25;
+            header.BackColor = headerColor;
+
+            Label lbl = new Label();
+            lbl.Text = message;
+            lbl.AutoSize = false;
+            lbl.TextAlign = ContentAlignment.MiddleCenter;
+            lbl.Dock = DockStyle.Fill;
+            lbl.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+
+            Button btn = new Button();
+            btn.Text = "OK";
+            btn.Width = 80;
+            btn.Height = 30;
+            btn.Location = new Point(130, 80);
+            btn.Click += (s, e) => popup.Close();
+
+            popup.Controls.Add(lbl);
+            popup.Controls.Add(btn);
+            popup.Controls.Add(header);
+
+            popup.ShowDialog();
         }
     }
 }

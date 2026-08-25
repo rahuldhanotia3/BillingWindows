@@ -34,6 +34,7 @@ namespace ProductCRMAPI
         {
             this.components = new System.ComponentModel.Container();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BillingUsers));
             this.dgvUsers = new System.Windows.Forms.DataGridView();
             this.textBoxArray1 = new Microsoft.VisualBasic.Compatibility.VB6.TextBoxArray(this.components);
             this.txtGSTINNumber = new System.Windows.Forms.TextBox();
@@ -338,6 +339,7 @@ namespace ProductCRMAPI
             this.Controls.Add(this.dgvUsers);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "BillingUsers";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

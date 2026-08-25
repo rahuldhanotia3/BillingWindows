@@ -33,7 +33,8 @@ namespace ProductCRMAPI
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.dgvItems = new System.Windows.Forms.DataGridView();
             this.textBoxArray1 = new Microsoft.VisualBasic.Compatibility.VB6.TextBoxArray(this.components);
             this.txtGSTINNumber = new System.Windows.Forms.TextBox();
@@ -84,8 +85,8 @@ namespace ProductCRMAPI
             // 
             // dgvItems
             // 
-            dataGridViewCellStyle3.BackColor = System.Drawing.Color.LightGray;
-            this.dgvItems.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.BackColor = System.Drawing.Color.LightGray;
+            this.dgvItems.AlternatingRowsDefaultCellStyle = dataGridViewCellStyle1;
             this.dgvItems.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvItems.BackgroundColor = System.Drawing.Color.White;
@@ -143,7 +144,7 @@ namespace ProductCRMAPI
             this.txtContactNo.Location = new System.Drawing.Point(443, 99);
             this.txtContactNo.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.txtContactNo.MaximumSize = new System.Drawing.Size(350, 30);
-            this.txtContactNo.MaxLength = 350;
+            this.txtContactNo.MaxLength = 10;
             this.txtContactNo.MinimumSize = new System.Drawing.Size(350, 30);
             this.txtContactNo.Name = "txtContactNo";
             this.txtContactNo.Size = new System.Drawing.Size(350, 30);
@@ -708,6 +709,7 @@ namespace ProductCRMAPI
             this.Controls.Add(this.dgvItems);
             this.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
