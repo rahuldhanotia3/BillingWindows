@@ -187,6 +187,9 @@
     <None Include="Resources\Dose.png" />
     <None Include="Resources\sunday.png" />
     <None Include="Resources\friday.png" />
+    <None Include="Resources\logo.png" />
+    <None Include="Resources\delete.png" />
+    <None Include="Resources\delete1.png" />
     <Content Include="Uploads\Invoices.xlsx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

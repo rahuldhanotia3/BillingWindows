@@ -158,7 +158,11 @@ namespace ProductCRMAPI
                         sheet.Cells[i, 2].Value = txtItemName.Text;
                         sheet.Cells[i, 3].Value = txtHsn.Text;
                         sheet.Cells[i, 4].Value = txtunit.Text;
-                        sheet.Cells[i, 5].Value = txtQuantity.Text;
+
+                        int AllQty = Convert.ToInt32(sheet.Cells[i, 5].Value);
+                        int newQty = Convert.ToInt32(txtQuantity.Text);
+                        AllQty += newQty;
+                        sheet.Cells[i, 5].Value = AllQty.ToString();
                         sheet.Cells[i, 6].Value = txtMRP.Text;
                         sheet.Cells[i, 7].Value = txtPPrice.Text;
                         sheet.Cells[i, 8].Value = txtSPrice.Text;

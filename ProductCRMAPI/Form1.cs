@@ -18,13 +18,16 @@ using System.Net.Http.Headers;
 using System.Net.Mail;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using System.Windows.Forms;
 using System.Xml.Linq;
 using static QuestPDF.Helpers.Colors;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using Button = System.Windows.Forms.Button;
 using Color = System.Drawing.Color;
+using Label = System.Windows.Forms.Label;
 using LicenseContext = OfficeOpenXml.LicenseContext;
+using Panel = System.Windows.Forms.Panel;
 using Size = System.Drawing.Size;
 using TextBox = System.Windows.Forms.TextBox;
 
@@ -85,6 +88,7 @@ namespace ProductCRMAPI
             txtlistbox.MouseClick += listBoxItems_Click;
             txtBillTo.Leave += txtBillTo_Leave;
             listBoxBillingSearch.MouseDown += listBoxBillingSearch_MouseDown;
+            dgvItems.CellClick += dgvItems_CellClick;
             //txtItemName.Leave += txtListBox_LeaveClick;
 
             //Validation for numeric
@@ -115,7 +119,15 @@ namespace ProductCRMAPI
             dgvItems.Columns.Add("txtGST", "GST %");
             dgvItems.Columns.Add("txtAmount", "Amount");
 
+            DataGridViewImageColumn deleteColumn = new DataGridViewImageColumn();
+            deleteColumn.Name = "Delete";
+            deleteColumn.HeaderText = "";
+            deleteColumn.Image = new Bitmap(Properties.Resources.delete);
+            deleteColumn.ImageLayout = DataGridViewImageCellLayout.Zoom;
+
+            dgvItems.Columns.Add(deleteColumn);
             dgvItems.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvItems.AllowUserToAddRows = false;
         }
         private void NumericTextBox_KeyPress(object sender, KeyPressEventArgs e)
         {
@@ -725,6 +737,11 @@ namespace ProductCRMAPI
             txtInvoiceNo.Text = GenerateInvoiceNumber();
             dgvItems.Rows.Clear();
             ClearItemFields();
+            Total = 0;
+            SubTotal = 0;
+            TotalDiscount = 0;
+            TotalCGST = 0;
+            TotalSGST = 0;
         }
 
         private void UpdateItem()
@@ -757,7 +774,12 @@ namespace ProductCRMAPI
                 return;
             }
         }
-
+        byte[] ImageToBytes(System.Drawing.Image image)
+        {
+            var ms = new MemoryStream();
+            image.Save(ms, image.RawFormat);
+            return ms.ToArray();
+        }
         private void btnPrint_Click(object sender, EventArgs e)
         {
             if (!ValidateRequiredFields())
@@ -778,15 +800,24 @@ namespace ProductCRMAPI
                     page.Size(PageSizes.A5);
                     page.Margin(20);
 
-                    page.Header().Column(col =>
+                    page.Header().Row(row =>
                     {
-                        col.Item().Text("AARAV ENTERPRISES")
-                            .FontSize(13)
-                            .Bold();
+                        //row.ConstantItem(40).Height(40).Image(ImageToBytes(Properties.Resources.logo));
+                        
+                        row.RelativeItem().Column(col =>
+                        {
+                            col.Item().Text("AARAV ENTERPRISES")
+                                .FontSize(13)
+                                .Bold();
 
-                        col.Item().Text("Dal Bazar Lashkar, Gwalior").FontSize(10);
-                        col.Item().Text("GSTIN : 23CYSPB9884R1Z8").FontSize(10);
-                        col.Item().Text("Contact : +91 9977422337").FontSize(10);
+                            col.Item().Text("Dal Bazar Lashkar, Gwalior").FontSize(10);
+                            col.Item().Text("GSTIN : 23CYSPB9884R1Z8").FontSize(10);
+                            col.Item().Text("Contact : +91 9977422337").FontSize(10);
+                        });
+
+                        //row.ConstantItem(50)
+                        //    .Height(50)
+                        //    .Image(ImageToBytes(Properties.Resources.logo));
                     });
 
                     page.Content().PaddingVertical(12).Column(col =>
@@ -1065,6 +1096,47 @@ namespace ProductCRMAPI
             popup.Controls.Add(btn);
 
             popup.ShowDialog();
+        }
+        private void dgvItems_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0 &&
+                dgvItems.Columns[e.ColumnIndex].Name == "Delete")
+            {
+                foreach (DataGridViewRow row in dgvItems.Rows)
+                {
+                    if (row.IsNewRow)
+                        continue;
+
+                    decimal tempQty = Convert.ToDecimal(row.Cells[2].Value ?? 0);
+                    decimal tempPrice = Convert.ToDecimal(row.Cells[3].Value ?? 0);
+                    decimal tempDiscount = Convert.ToDecimal(row.Cells[4].Value ?? 0);
+                    decimal tempGst = Convert.ToDecimal(row.Cells[5].Value ?? 0);
+                    decimal tempAmount = Convert.ToDecimal(row.Cells[3].Value ?? 0);
+
+                    decimal baseAmount = tempQty * tempPrice;
+
+                    decimal gstMultiplier = 1 + (tempGst / 100);
+
+                    decimal price = baseAmount / gstMultiplier;
+
+                    TotalDiscount -= price * tempDiscount / 100;
+
+                    decimal finalAmount = price - TotalDiscount;
+                    SubTotal -= finalAmount;
+
+                    price = price - TotalDiscount;
+
+                    decimal gstAmnt = price * tempGst / 100;
+
+                    TotalCGST -= gstAmnt / 2;
+                    TotalSGST -= gstAmnt / 2;
+
+                    finalAmount = Convert.ToDecimal(txtAmount.Text);
+
+                    Total -= finalAmount;
+                }
+                dgvItems.Rows.RemoveAt(e.RowIndex);
+            }
         }
     }
 }
