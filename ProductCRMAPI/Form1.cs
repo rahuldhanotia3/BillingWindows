@@ -41,8 +41,6 @@ namespace ProductCRMAPI
         decimal TotalCGST = 0;
         decimal Total = 0;
         decimal Received = 0;
-        decimal Balance = 0;
-        decimal Saved = 0;
         string excelInvoice = ConfigurationManager.AppSettings["excelInvoice"];
         string excelInventory = ConfigurationManager.AppSettings["excelInventory"];
 
@@ -181,60 +179,88 @@ namespace ProductCRMAPI
         }
         private void button1_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrEmpty(txtDiscount.Text))
-                txtDiscount.Text = "0";
-
             decimal qty = Convert.ToDecimal(txtQty.Text);
-            decimal price = Convert.ToDecimal(txtPrice.Text);
+            //decimal price = Convert.ToDecimal(txtPrice.Text);
 
-            decimal discount = 0;
-            decimal.TryParse(txtDiscount.Text, out discount);
+            //decimal discount = 0;
+            //decimal.TryParse(txtDiscount.Text, out discount);
 
-            decimal gst = 0;
-            decimal.TryParse(txtGST.Text, out gst);
+            //decimal gst = 0;
+            //decimal.TryParse(txtGST.Text, out gst);
 
-            decimal baseAmount = qty * price;
+            //decimal baseAmount = qty * price;
 
-            decimal gstMultiplier = 1 + (gst / 100);
+            //decimal gstMultiplier = 1 + (gst / 100);
 
-            price = baseAmount / gstMultiplier;
+            //price = baseAmount / gstMultiplier;
 
 
             
-            TotalDiscount += price * discount / 100;
+            //TotalDiscount += price * discount / 100;
 
-            decimal finalAmount = price - TotalDiscount;
-            SubTotal += finalAmount;
+            //decimal finalAmount = price - TotalDiscount;
+            //SubTotal += finalAmount;
 
-            price = price - TotalDiscount;
+            //price = price - TotalDiscount;
 
-            decimal gstAmnt = price * gst / 100;
+            //decimal gstAmnt = price * gst / 100;
 
-            TotalCGST += gstAmnt / 2;
-            TotalSGST += gstAmnt / 2;
+            //TotalCGST += gstAmnt / 2;
+            //TotalSGST += gstAmnt / 2;
 
-            finalAmount = Convert.ToDecimal(txtAmount.Text);
+            //finalAmount = Convert.ToDecimal(txtAmount.Text);
             int QtyCheck = Convert.ToInt32(txtQty.Text);
 
-            Total += finalAmount;
+            //Total += finalAmount;
             if (QtyCheck > Convert.ToInt32(txtAvailableQty.Text))
             {
                 ShowMessage("You don't have enough quantity!", Color.FromArgb(220, 53, 69));
                 return;
             }
-
+            var result = UpdateTotals(Convert.ToDecimal(txtQty.Text),Convert.ToDecimal(txtPrice.Text),Convert.ToDecimal(txtGST.Text),
+                 string.IsNullOrWhiteSpace(txtDiscount.Text)
+                     ? 0
+                     : Convert.ToDecimal(txtDiscount.Text),
+                 true
+             );
+            decimal productPrice = result.ProductPrice;
+            decimal finalAmount = result.FinalAmount;
             dgvItems.Rows.Add(
                 txtItemName.Text,
                 txtHSN.Text,
                 qty,
                 cmbUnit.Text,
-                price.ToString("0.00"),
-                discount == 0m ? "" : discount.ToString("0.##"),
-                gst,
+                productPrice.ToString("0.00"),
+                txtDiscount.Text,
+                txtGST.Text,
                 finalAmount.ToString("0.00")
             );
 
             ClearItemFields();
+        }
+        private (decimal ProductPrice, decimal FinalAmount) UpdateTotals(decimal qty,decimal price,decimal gst,decimal discount,bool isAdd)
+        {
+            decimal baseAmount = qty * price;
+
+            decimal taxableAmount = baseAmount / (1 + (gst / 100));
+
+            decimal discountAmount = taxableAmount * discount / 100;
+
+            decimal netAmount = taxableAmount - discountAmount;
+
+            decimal gstAmount = netAmount * gst / 100;
+
+            decimal finalAmount = netAmount + gstAmount;
+
+            int factor = isAdd ? 1 : -1;
+
+            TotalDiscount += factor * discountAmount;
+            SubTotal += factor * netAmount;
+            TotalCGST += factor * (gstAmount / 2);
+            TotalSGST += factor * (gstAmount / 2);
+            Total += factor * finalAmount;
+
+            return (netAmount, finalAmount);
         }
         private void CalculateAmount()
         {
@@ -250,14 +276,15 @@ namespace ProductCRMAPI
 
             decimal baseAmount = qty * price;
 
-            decimal discountAmt = baseAmount * discount / 100;
+            decimal taxableAmount = baseAmount / (1 + (gst / 100));
 
-            decimal taxableAmount = baseAmount - discountAmt;
+            decimal discountAmount = taxableAmount * discount / 100;
 
-            decimal gstAmt = taxableAmount * gst / 100;
+            decimal netAmount = taxableAmount - discountAmount;
 
-            //decimal finalAmount = taxableAmount + gstAmt;
-            decimal finalAmount = taxableAmount;
+            decimal gstAmount = netAmount * gst / 100;
+
+            decimal finalAmount = netAmount + gstAmount;
 
             txtAmount.Text = finalAmount.ToString("0.00");
         }
@@ -302,44 +329,6 @@ namespace ProductCRMAPI
         private void Form1_Load_1(object sender, EventArgs e)
         {
 
-        }
-
-        private void CalculateSummary()
-        {
-            SubTotal = 0;
-            TotalDiscount = 0;
-            TotalSGST = 0;
-            TotalCGST = 0;
-
-            foreach (DataGridViewRow row in dgvItems.Rows)
-            {
-                if (row.IsNewRow)
-                    continue;
-
-                decimal qty = Convert.ToDecimal(row.Cells["txtQty"].Value ?? 0);
-                decimal price = Convert.ToDecimal(row.Cells["txtPrice"].Value ?? 0);
-                decimal discount = decimal.TryParse(Convert.ToString(row.Cells["txtDiscount"].Value),out var d)? d: 0;
-                decimal gst = Convert.ToDecimal(row.Cells["txtGST"].Value ?? 0);
-
-                decimal discountAmt = price * discount / 100; //2806 * 3 /100
-                TotalDiscount += discountAmt;//84.18
-
-                decimal taxableAmount = price - discountAmt;//2806-84
-
-                SubTotal += taxableAmount; //2722
-
-                decimal sgst = taxableAmount * (gst / 2) / 100;
-                decimal cgst = taxableAmount * (gst / 2) / 100;
-
-                TotalSGST += sgst;
-                TotalCGST += cgst;
-            }
-
-            Saved = TotalDiscount;
-
-            Total = SubTotal + TotalSGST + TotalCGST;
-
-            Balance = Total - Received;
         }
 
         private void btnAdmin_Click(object sender, EventArgs e)
@@ -784,7 +773,7 @@ namespace ProductCRMAPI
         {
             if (!ValidateRequiredFields())
                 return;
-            if (dgvItems.Rows.Count == 1)
+            if (dgvItems.Rows.Count == 0)
             {
                 ShowMessage($"At least one item is required", Color.FromArgb(220, 53, 69));
                 return;
@@ -1102,39 +1091,27 @@ namespace ProductCRMAPI
             if (e.RowIndex >= 0 &&
                 dgvItems.Columns[e.ColumnIndex].Name == "Delete")
             {
-                foreach (DataGridViewRow row in dgvItems.Rows)
-                {
-                    if (row.IsNewRow)
-                        continue;
+
+                    DataGridViewRow row = dgvItems.Rows[e.RowIndex];
+
+                    string cellValue = row.Cells[5].Value?.ToString();
+                    decimal tempDiscnt = string.IsNullOrWhiteSpace(cellValue) ? 0 : Convert.ToDecimal(cellValue);
 
                     decimal tempQty = Convert.ToDecimal(row.Cells[2].Value ?? 0);
-                    decimal tempPrice = Convert.ToDecimal(row.Cells[3].Value ?? 0);
-                    decimal tempDiscount = Convert.ToDecimal(row.Cells[4].Value ?? 0);
-                    decimal tempGst = Convert.ToDecimal(row.Cells[5].Value ?? 0);
-                    decimal tempAmount = Convert.ToDecimal(row.Cells[3].Value ?? 0);
+                    decimal tempPrice = Convert.ToDecimal(row.Cells[4].Value ?? 0);
+                    decimal tempDiscount = tempDiscnt;
+                    decimal tempGst = Convert.ToDecimal(row.Cells[6].Value ?? 0);
+                    decimal tempAmount = Convert.ToDecimal(row.Cells[7].Value ?? 0);
 
-                    decimal baseAmount = tempQty * tempPrice;
-
-                    decimal gstMultiplier = 1 + (tempGst / 100);
-
-                    decimal price = baseAmount / gstMultiplier;
-
-                    TotalDiscount -= price * tempDiscount / 100;
-
-                    decimal finalAmount = price - TotalDiscount;
-                    SubTotal -= finalAmount;
-
-                    price = price - TotalDiscount;
-
-                    decimal gstAmnt = price * tempGst / 100;
-
-                    TotalCGST -= gstAmnt / 2;
-                    TotalSGST -= gstAmnt / 2;
-
-                    finalAmount = Convert.ToDecimal(txtAmount.Text);
-
-                    Total -= finalAmount;
-                }
+                    
+                    UpdateTotals(
+                        Convert.ToDecimal(tempQty),
+                        Convert.ToDecimal(tempAmount/ tempQty),
+                        Convert.ToDecimal(tempGst),
+                        tempDiscount,
+                        false
+                    );
+                
                 dgvItems.Rows.RemoveAt(e.RowIndex);
             }
         }
