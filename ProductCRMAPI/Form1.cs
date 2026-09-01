@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using OfficeOpenXml;
+using QRCoder;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -808,6 +809,9 @@ namespace ProductCRMAPI
                         //row.ConstantItem(60).Width(60)
                         //    .Height(60).MaxHeight(60).MaxWidth(60)
                         //    .Image(ImageToBytes(Properties.Resources.logo));
+
+                        var upiUrl = "upi://pay?pa=merchant@upi&pn=ABC Store&am=1300&cu=INR";
+                        //var qrCodeBytes = GenerateQrCode(upiUrl);
                     });
 
                     page.Content().PaddingVertical(1).Column(col =>
@@ -1115,6 +1119,18 @@ namespace ProductCRMAPI
                 
                 dgvItems.Rows.RemoveAt(e.RowIndex);
             }
+        }
+
+        private byte[] GenerateQrCode(string paymentData)
+        {
+            var qrGenerator = new QRCodeGenerator();
+            var qrCodeData = qrGenerator.CreateQrCode(
+                paymentData,
+                QRCodeGenerator.ECCLevel.Q);
+
+            var pngQrCode = new PngByteQRCode(qrCodeData);
+
+            return pngQrCode.GetGraphic(20);
         }
     }
 }
