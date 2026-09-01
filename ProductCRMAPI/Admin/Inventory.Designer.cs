@@ -34,14 +34,6 @@ namespace ProductCRMAPI
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Inventory));
             this.dgvInventory = new System.Windows.Forms.DataGridView();
-            this.ItemName = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.HSN = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Unit = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.Qty = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.MRP = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.PurchasePrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.SalePrice = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.GST = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.textBoxArray1 = new Microsoft.VisualBasic.Compatibility.VB6.TextBoxArray(this.components);
             this.txtunit = new System.Windows.Forms.TextBox();
             this.txtSPrice = new System.Windows.Forms.TextBox();
@@ -80,15 +72,6 @@ namespace ProductCRMAPI
             this.dgvInventory.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dgvInventory.BackgroundColor = System.Drawing.Color.White;
             this.dgvInventory.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvInventory.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.ItemName,
-            this.HSN,
-            this.Unit,
-            this.Qty,
-            this.MRP,
-            this.PurchasePrice,
-            this.SalePrice,
-            this.GST});
             this.dgvInventory.GridColor = System.Drawing.SystemColors.ControlDarkDark;
             this.dgvInventory.Location = new System.Drawing.Point(14, 296);
             this.dgvInventory.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
@@ -99,62 +82,6 @@ namespace ProductCRMAPI
             this.dgvInventory.RowTemplate.Height = 20;
             this.dgvInventory.Size = new System.Drawing.Size(1759, 242);
             this.dgvInventory.TabIndex = 0;
-            // 
-            // ItemName
-            // 
-            this.ItemName.HeaderText = "Item Name";
-            this.ItemName.MinimumWidth = 8;
-            this.ItemName.Name = "ItemName";
-            this.ItemName.ReadOnly = true;
-            // 
-            // HSN
-            // 
-            this.HSN.HeaderText = "HSN";
-            this.HSN.MinimumWidth = 8;
-            this.HSN.Name = "HSN";
-            this.HSN.ReadOnly = true;
-            // 
-            // Unit
-            // 
-            this.Unit.HeaderText = "Unit";
-            this.Unit.MinimumWidth = 8;
-            this.Unit.Name = "Unit";
-            this.Unit.ReadOnly = true;
-            // 
-            // Qty
-            // 
-            this.Qty.HeaderText = "Qty";
-            this.Qty.MinimumWidth = 8;
-            this.Qty.Name = "Qty";
-            this.Qty.ReadOnly = true;
-            // 
-            // MRP
-            // 
-            this.MRP.HeaderText = "MRP";
-            this.MRP.MinimumWidth = 8;
-            this.MRP.Name = "MRP";
-            this.MRP.ReadOnly = true;
-            // 
-            // PurchasePrice
-            // 
-            this.PurchasePrice.HeaderText = "Purchase Price";
-            this.PurchasePrice.MinimumWidth = 8;
-            this.PurchasePrice.Name = "PurchasePrice";
-            this.PurchasePrice.ReadOnly = true;
-            // 
-            // SalePrice
-            // 
-            this.SalePrice.HeaderText = "Sale Price";
-            this.SalePrice.MinimumWidth = 8;
-            this.SalePrice.Name = "SalePrice";
-            this.SalePrice.ReadOnly = true;
-            // 
-            // GST
-            // 
-            this.GST.HeaderText = "GST";
-            this.GST.MinimumWidth = 8;
-            this.GST.Name = "GST";
-            this.GST.ReadOnly = true;
             // 
             // txtunit
             // 
@@ -526,14 +453,6 @@ namespace ProductCRMAPI
         private System.Windows.Forms.TextBox txtMRP;
         private System.Windows.Forms.Label lblMRP;
         private System.Windows.Forms.ListBox listboxItem;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ItemName;
-        private System.Windows.Forms.DataGridViewTextBoxColumn HSN;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Unit;
-        private System.Windows.Forms.DataGridViewTextBoxColumn Qty;
-        private System.Windows.Forms.DataGridViewTextBoxColumn MRP;
-        private System.Windows.Forms.DataGridViewTextBoxColumn PurchasePrice;
-        private System.Windows.Forms.DataGridViewTextBoxColumn SalePrice;
-        private System.Windows.Forms.DataGridViewTextBoxColumn GST;
     }
 }
 

@@ -41,17 +41,23 @@ namespace ProductCRMAPI
         private void Form1_Load(object sender, EventArgs e)
         {
             //this.Close();
-            //InitializeInvoiceGrid();
-            InventoryForm_Load(sender,e);
-        }
-        private void InventoryForm_Load(object sender, EventArgs e)
-        {
+            dgvInventory.Columns.Clear();
+            dgvInventory.Columns.Add("ItemName", "Item Name");
+            dgvInventory.Columns.Add("HSN", "HSN");
+            dgvInventory.Columns.Add("Unit", "Unit");
+            dgvInventory.Columns.Add("Qty", "Quantity");
+            dgvInventory.Columns.Add("MRP", "MRP");
+            dgvInventory.Columns.Add("PurchasePrice", "Purchase Price");
+            dgvInventory.Columns.Add("SalePrice", "Sale Price");
+            dgvInventory.Columns.Add("GST", "GST");
+
+            dgvInventory.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             LoadInventory();
             txtItemName.KeyUp += txtItemName_KeyUp;
             txtItemName.KeyDown += listBoxItems_KeyDown;
             listboxItem.MouseClick += listBoxItems_Click;
-            //txtItemName.Leave += txtListBox_LeaveClick;
         }
+        
         private void LoadInventory()
         {
             dgvInventory.Rows.Clear();
@@ -135,11 +141,11 @@ namespace ProductCRMAPI
                 sheet.Cells[nextRow, 9].Value = textGst.Text;
 
                 package.Save();
+                ShowMessage("Item Added!", Color.Green);
+                ClearAllFields();
             }
 
             LoadInventory();
-
-            //MessageBox.Show("Item Added");
         }
         private void UpdateItem()
         {
@@ -170,6 +176,7 @@ namespace ProductCRMAPI
 
                         package.Save();
                         ShowMessage("Item Updated!", Color.Green);
+                        ClearAllFields();
                         LoadInventory();
                         return;
                     }
@@ -303,6 +310,18 @@ namespace ProductCRMAPI
             popup.Controls.Add(header);
 
             popup.ShowDialog();
+        }
+        
+        public void ClearAllFields()
+        {
+            txtItemName.Clear();
+            txtHsn.Clear();
+            txtQuantity.Clear();
+            txtunit.Clear();
+            txtPPrice.Clear();
+            txtSPrice.Clear();
+            txtMRP.Clear();
+            textGst.Clear();
         }
     }
 }

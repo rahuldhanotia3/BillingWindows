@@ -97,11 +97,11 @@ namespace ProductCRMAPI
             txtGST.KeyPress += NumericTextBox_KeyPress;
             txtAmount.KeyPress += NumericTextBox_KeyPress;
             //validation for required
-            txtContactNo.Tag = "Required";
+            //txtContactNo.Tag = "Required";
             txtBillTo.Tag = "Required";
             txtState.Tag = "Required";
             txtInvoiceDate.Tag = "Required";
-            txtGSTINNumber.Tag = "Required";
+            //txtGSTINNumber.Tag = "Required";
             txtPOS.Tag = "Required";
         }
         private void InitializeInvoiceGrid()
@@ -786,8 +786,9 @@ namespace ProductCRMAPI
             {
                 container.Page(page =>
                 {
-                    page.Size(PageSizes.A5);
-                    page.Margin(20);
+                    page.Size(PageSizes.A5.Landscape());
+                    
+                    page.Margin(5);
 
                     page.Header().Row(row =>
                     {
@@ -796,7 +797,7 @@ namespace ProductCRMAPI
                         row.RelativeItem().Column(col =>
                         {
                             col.Item().Text("AARAV ENTERPRISES")
-                                .FontSize(13)
+                                .FontSize(11)
                                 .Bold();
 
                             col.Item().Text("Dal Bazar Lashkar, Gwalior").FontSize(10);
@@ -804,22 +805,22 @@ namespace ProductCRMAPI
                             col.Item().Text("Contact : +91 9977422337").FontSize(10);
                         });
 
-                        //row.ConstantItem(50)
-                        //    .Height(50)
+                        //row.ConstantItem(60).Width(60)
+                        //    .Height(60).MaxHeight(60).MaxWidth(60)
                         //    .Image(ImageToBytes(Properties.Resources.logo));
                     });
 
-                    page.Content().PaddingVertical(12).Column(col =>
+                    page.Content().PaddingVertical(1).Column(col =>
                     {
-                        col.Spacing(10);
+                        col.Spacing(5);
 
                         col.Item().AlignCenter().Text("Tax Invoice")
-                            .FontSize(12).FontColor("#9B7AD9")
+                            .FontSize(11).FontColor("#9B7AD9")
                             .Bold();
 
                         col.Item().Row(row =>
                         {
-                            row.RelativeItem(4).Border(0).Padding(2).Column(left =>
+                            row.RelativeItem(4).Border(0).Padding(1).Column(left =>
                             {
                                 left.Item().Text("Bill To").FontSize(10).Bold();
 
@@ -829,7 +830,7 @@ namespace ProductCRMAPI
                                 left.Item().Text("State : " + txtState.Text).FontSize(9);
                             });
 
-                            row.RelativeItem(4).AlignRight().Border(0).Padding(2).Column(right =>
+                            row.RelativeItem(4).AlignRight().Border(0).Padding(1).Column(right =>
                             {
                                 right.Item().Text($"Invoice No : {txtInvoiceNo.Text}").FontSize(9);
                                 right.Item().Text($"Invoice Date : {txtInvoiceDate.Value.ToString("dd/MM/yyyy")}").FontSize(9);
@@ -855,15 +856,15 @@ namespace ProductCRMAPI
 
                             table.Header(header =>
                             {
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Item").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("HSN").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Qty").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Unit").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Rate").FontSize(10);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Item").FontSize(8);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("HSN").FontSize(8);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Qty").FontSize(8);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Unit").FontSize(8);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Rate").FontSize(8);
                                 //if (TotalDiscount > 0)
-                                    header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Discount %").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("GST %").FontSize(10);
-                                header.Cell().Border(1).Background("#9B7AD9").Padding(2).Text("Amount").FontSize(10);
+                                    header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Discount %").FontSize(8);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("GST %").FontSize(8);
+                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Amount").FontSize(8);
                             });
 
                             foreach (DataGridViewRow row in dgvItems.Rows)
@@ -871,30 +872,30 @@ namespace ProductCRMAPI
                                 if (row.IsNewRow)
                                     continue;
 
-                                table.Cell().Border(1).Padding(3)
+                                table.Cell().Border(1).Padding(1)
                                     .Text(row.Cells["txtItemName"].Value?.ToString() ?? "").FontSize(8);
 
-                                table.Cell().Border(1).Padding(3)
+                                table.Cell().Border(1).Padding(1)
                                     .Text(row.Cells["txtHSN"].Value?.ToString() ?? "").FontSize(8);
 
-                                table.Cell().Border(1).Padding(3)
+                                table.Cell().Border(1).Padding(1)
                                     .Text(row.Cells["txtQty"].Value?.ToString() ?? "").FontSize(8);
 
-                                table.Cell().Border(1).Padding(3)
+                                table.Cell().Border(1).Padding(1)
                                     .Text(row.Cells["txtUnit"].Value?.ToString() ?? "").FontSize(8);
 
-                                table.Cell().Border(1).Padding(3)
+                                table.Cell().Border(1).Padding(1)
                                     .Text(Convert.ToDecimal(row.Cells["txtPrice"].Value ?? 0).ToString("0.00")).FontSize(8);
 
                                 if (TotalDiscount < 0)
-                                    table.Cell().Border(1).Padding(3).Text("").FontSize(8);
+                                    table.Cell().Border(1).Padding(1).Text("").FontSize(8);
                                 else
-                                    table.Cell().Border(1).Padding(3).Text(row.Cells["txtDiscount"].Value?.ToString() ?? "").FontSize(8);
+                                    table.Cell().Border(1).Padding(1).Text(row.Cells["txtDiscount"].Value?.ToString() ?? "").FontSize(8);
 
-                                table.Cell().Border(1).Padding(3)
+                                table.Cell().Border(1).Padding(1)
                                         .Text(row.Cells["txtGST"].Value?.ToString() ?? "").FontSize(8);
 
-                                table.Cell().Border(1).Padding(3)
+                                table.Cell().Border(1).Padding(1)
                                     .Text(row.Cells["txtAmount"].Value?.ToString() ?? "").FontSize(8);
                                 try {
                                     productList.Add(row.Cells["txtItemName"].Value.ToString(), row.Cells["txtQty"].Value.ToString());
@@ -914,12 +915,12 @@ namespace ProductCRMAPI
                             // Left Side
                             mainRow.RelativeItem().Column(left =>
                             {
-                                left.Item().Text("Invoice Amount In Words").Bold().FontSize(10);
-                                left.Item().PaddingTop(3);
+                                left.Item().Text("Invoice Amount In Words").Bold().FontSize(9);
+                                left.Item().PaddingTop(1);
                                 left.Item().Text(ttlAmt).FontSize(8);
-                                left.Item().PaddingTop(3);
-                                left.Item().Text("Terms & Conditions").Bold().FontSize(10);
-                                left.Item().PaddingTop(3);
+                                left.Item().PaddingTop(1);
+                                left.Item().Text("Terms & Conditions").Bold().FontSize(9);
+                                left.Item().PaddingTop(1);
                                 left.Item().Text("Thank you for doing business with us.").FontSize(8);
                             });
 
