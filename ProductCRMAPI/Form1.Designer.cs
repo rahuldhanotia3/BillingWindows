@@ -79,7 +79,7 @@ namespace ProductCRMAPI
             this.button2 = new System.Windows.Forms.Button();
             this.txtAvailableQty = new System.Windows.Forms.TextBox();
             this.label17 = new System.Windows.Forms.Label();
-            this.chkGST = new System.Windows.Forms.CheckBox();
+            this.chkGSTIN = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgvItems)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.textBoxArray1)).BeginInit();
             this.SuspendLayout();
@@ -660,23 +660,23 @@ namespace ProductCRMAPI
             this.label17.TabIndex = 47;
             this.label17.Text = "Available : ";
             // 
-            // chkGST
+            // chkGSTIN
             // 
-            this.chkGST.AutoSize = true;
-            this.chkGST.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkGST.Location = new System.Drawing.Point(443, 234);
-            this.chkGST.Name = "chkGST";
-            this.chkGST.Size = new System.Drawing.Size(168, 24);
-            this.chkGST.TabIndex = 48;
-            this.chkGST.Text = "Include GST IN?";
-            this.chkGST.UseVisualStyleBackColor = true;
+            this.chkGSTIN.AutoSize = true;
+            this.chkGSTIN.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.chkGSTIN.Location = new System.Drawing.Point(443, 234);
+            this.chkGSTIN.Name = "chkGSTIN";
+            this.chkGSTIN.Size = new System.Drawing.Size(168, 24);
+            this.chkGSTIN.TabIndex = 48;
+            this.chkGSTIN.Text = "Include GST IN?";
+            this.chkGSTIN.UseVisualStyleBackColor = true;
             // 
             // Form1
             // 
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(1787, 1044);
-            this.Controls.Add(this.chkGST);
+            this.Controls.Add(this.chkGSTIN);
             this.Controls.Add(this.label17);
             this.Controls.Add(this.txtAvailableQty);
             this.Controls.Add(this.button5);
@@ -781,7 +781,7 @@ namespace ProductCRMAPI
         private Button button5;
         private TextBox txtAvailableQty;
         private Label label17;
-        private CheckBox chkGST;
+        private CheckBox chkGSTIN;
     }
 }
 
