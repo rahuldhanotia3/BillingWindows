@@ -771,79 +771,6 @@ namespace ProductCRMAPI
             image.Save(ms, image.RawFormat);
             return ms.ToArray();
         }
-        void BuildInvoice(ColumnDescriptor col, string ttlAmt)
-        {
-            col.Spacing(2);
-
-            // Header
-            col.Item().Row(row =>
-            {
-                row.RelativeItem().Column(c =>
-                {
-                    c.Item().Text("AARAV ENTERPRISES")
-                        .FontSize(10)
-                        .Bold();
-
-                    c.Item().Text("Dal Bazar Lashkar, Gwalior").FontSize(8);
-                    c.Item().Text("GSTIN : 23CYSPB9884R1Z8").FontSize(8);
-                    c.Item().Text("Contact : +91 9977422337").FontSize(8);
-                });
-
-                row.ConstantItem(60)
-                    .Height(60)
-                    .Image(ImageToBytes(Properties.Resources.logo120));
-            });
-
-            // Tax Invoice
-
-            col.Item()
-                .AlignCenter()
-                .Text("Tax Invoice")
-                .FontSize(10)
-                .Bold();
-
-            // Bill Details
-
-            col.Item().Row(row =>
-            {
-                row.RelativeItem().Column(left =>
-                {
-                    left.Item().Text($"Bill To : {txtBillTo.Text}").FontSize(8);
-                    left.Item().Text($"Contact : {txtContactNo.Text}").FontSize(8);
-
-                    if (chkGSTIN.Checked)
-                        left.Item().Text($"GSTIN : {txtGSTINNumber.Text}").FontSize(8);
-
-                    left.Item().Text($"State : {txtState.Text}").FontSize(8);
-                });
-
-                row.RelativeItem().Column(right =>
-                {
-                    right.Item().Text($"Invoice No : {txtInvoiceNo.Text}").FontSize(8);
-                    right.Item().Text($"Invoice Date : {txtInvoiceDate.Value:dd/MM/yyyy}").FontSize(8);
-                    right.Item().Text($"Place Of Supply : {txtPOS.Text}").FontSize(8);
-                });
-            });
-
-            // Items Table
-            // (Paste your existing table code here)
-
-            // Totals
-            // (Paste your totals table here)
-
-            col.Item().Text("Invoice Amount In Words")
-                .Bold()
-                .FontSize(8);
-
-            col.Item().Text(ttlAmt)
-                .FontSize(7);
-
-            col.Item()
-                .PaddingTop(20)
-                .AlignRight()
-                .Text("Authorized Signatory")
-                .FontSize(8);
-        }
         private void btnPrint_Click(object sender, EventArgs e)
         {
             if (!ValidateRequiredFields())
@@ -863,19 +790,19 @@ namespace ProductCRMAPI
             {
                 container.Page(page =>
                 {
-                    page.Size(PageSizes.A4);
-                    page.Margin(5);
+                    page.Size(PageSizes.A5);
+                    //page.Margin(5);
 
                     page.Content().Column(main =>
                     {
                         // EXACT HALF PAGEs
                         main.Item()
-                            .Height(421)
+                            .Height(297)
                             .Element(container1 =>
                             {
                                 container1
                                     .RotateLayoutCounterclockwise()
-                                    .Width(421) // exact half-page
+                                    .Width(210) // exact half-page
                                     .Column(col =>
                                     {
                                         col.Spacing(2);
@@ -895,8 +822,8 @@ namespace ProductCRMAPI
                                                 c.Item().Text("Contact : +91 9977422337").FontSize(8);
                                             });
 
-                                            row.ConstantItem(60)
-                                                .Height(60)
+                                            row.ConstantItem(50)
+                                                .Height(50)
                                                 .Image(ImageToBytes(Properties.Resources.logo120));
                                         });
 
@@ -949,14 +876,14 @@ namespace ProductCRMAPI
 
                                             table.Header(header =>
                                             {
-                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Item").FontSize(7);
-                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("HSN").FontSize(7);
-                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Qty").FontSize(7);
-                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Unit").FontSize(7);
-                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Rate").FontSize(7);
-                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Discount").FontSize(7);
-                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("GST").FontSize(7);
-                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Amount").FontSize(7);
+                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Item").Bold().FontSize(7);
+                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("HSN").Bold().FontSize(7);
+                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Qty").Bold().FontSize(7);
+                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Unit").Bold().FontSize(7);
+                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Rate").Bold().FontSize(7);
+                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Discount").Bold().FontSize(7);
+                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("GST").Bold().FontSize(7);
+                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Amount").Bold().FontSize(7);
                                             });
 
                                             foreach (DataGridViewRow row in dgvItems.Rows)
@@ -995,6 +922,8 @@ namespace ProductCRMAPI
                                                 table.Cell().Border(1).Padding(1)
                                                     .Text(row.Cells["txtAmount"].Value?.ToString() ?? "")
                                                     .FontSize(7);
+
+                                                productList.Add(row.Cells["txtItemName"].Value?.ToString() ?? "", row.Cells["txtQty"].Value?.ToString() ?? "");
                                             }
                                         });
 
@@ -1041,7 +970,7 @@ namespace ProductCRMAPI
                             });
 
                         // Remaining half blank
-                        main.Item().Height(421);
+                        main.Item().Height(297);
                     });
                 });
             }).GeneratePdf();
