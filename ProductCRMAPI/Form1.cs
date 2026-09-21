@@ -1,6 +1,5 @@
 ﻿using Newtonsoft.Json;
 using OfficeOpenXml;
-using QRCoder;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
@@ -790,19 +789,17 @@ namespace ProductCRMAPI
             {
                 container.Page(page =>
                 {
-                    page.Size(PageSizes.A5);
-                    //page.Margin(5);
-
+                    page.Size(PageSizes.A5.Landscape());
+                    page.Margin(1);
                     page.Content().Column(main =>
                     {
                         // EXACT HALF PAGEs
                         main.Item()
-                            .Height(297)
+                            
                             .Element(container1 =>
                             {
                                 container1
-                                    .RotateLayoutCounterclockwise()
-                                    .Width(210) // exact half-page
+                                    .Width(297)
                                     .Column(col =>
                                     {
                                         col.Spacing(2);
@@ -849,7 +846,7 @@ namespace ProductCRMAPI
 
                                                 left.Item().Text($"State : {txtState.Text}").FontSize(8);
                                             });
-
+                                            row.ConstantItem(80);
                                             row.RelativeItem().Column(right =>
                                             {
                                                 right.Item().Text($"Invoice No : {txtInvoiceNo.Text}").FontSize(8);
@@ -885,45 +882,125 @@ namespace ProductCRMAPI
                                                 header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("GST").Bold().FontSize(7);
                                                 header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Amount").Bold().FontSize(7);
                                             });
-
-                                            foreach (DataGridViewRow row in dgvItems.Rows)
+                                            int itemCount = 0;
+                                            var validRows = dgvItems.Rows.Cast<DataGridViewRow>().Where(r => !r.IsNewRow).ToList();
+                                            foreach (DataGridViewRow row in validRows)
                                             {
-                                                if (row.IsNewRow)
-                                                    continue;
+                                                bool isLastRow = (itemCount == 13 ||
+                                                                  (itemCount == validRows.Count - 1 && validRows.Count >= 14));
 
-                                                table.Cell().Border(1).Padding(1)
-                                                    .Text(row.Cells["txtItemName"].Value?.ToString() ?? "")
+                                                // ITEM
+                                                var cell = table.Cell()
+                                                    .BorderVertical(1)
+                                                    .Padding(1);
+
+                                                if (isLastRow)
+                                                    cell = cell.BorderBottom(1);
+
+                                                cell.Text(row.Cells["txtItemName"].Value?.ToString() ?? "")
                                                     .FontSize(7);
 
-                                                table.Cell().Border(1).Padding(1)
-                                                    .Text(row.Cells["txtHSN"].Value?.ToString() ?? "")
+                                                // HSN
+                                                cell = table.Cell()
+                                                    .BorderVertical(1)
+                                                    .Padding(1);
+
+                                                if (isLastRow)
+                                                    cell = cell.BorderBottom(1);
+
+                                                cell.Text(row.Cells["txtHSN"].Value?.ToString() ?? "")
                                                     .FontSize(7);
 
-                                                table.Cell().Border(1).Padding(1)
-                                                    .Text(row.Cells["txtQty"].Value?.ToString() ?? "")
+                                                // QTY
+                                                cell = table.Cell()
+                                                    .BorderVertical(1)
+                                                    .Padding(1);
+
+                                                if (isLastRow)
+                                                    cell = cell.BorderBottom(1);
+
+                                                cell.Text(row.Cells["txtQty"].Value?.ToString() ?? "")
                                                     .FontSize(7);
 
-                                                table.Cell().Border(1).Padding(1)
-                                                    .Text(row.Cells["txtUnit"].Value?.ToString() ?? "")
+                                                // UNIT
+                                                cell = table.Cell()
+                                                    .BorderVertical(1)
+                                                    .Padding(1);
+
+                                                if (isLastRow)
+                                                    cell = cell.BorderBottom(1);
+
+                                                cell.Text(row.Cells["txtUnit"].Value?.ToString() ?? "")
                                                     .FontSize(7);
 
-                                                table.Cell().Border(1).Padding(1)
-                                                    .Text(Convert.ToDecimal(row.Cells["txtPrice"].Value ?? 0).ToString("0.00"))
+                                                // RATE
+                                                cell = table.Cell()
+                                                    .BorderVertical(1)
+                                                    .Padding(1);
+
+                                                if (isLastRow)
+                                                    cell = cell.BorderBottom(1);
+
+                                                cell.Text(
+                                                    Convert.ToDecimal(row.Cells["txtPrice"].Value ?? 0)
+                                                        .ToString("0.00")
+                                                )
+                                                .FontSize(7);
+
+                                                // DISCOUNT
+                                                cell = table.Cell()
+                                                    .BorderVertical(1)
+                                                    .Padding(1);
+
+                                                if (isLastRow)
+                                                    cell = cell.BorderBottom(1);
+
+                                                cell.Text(row.Cells["txtDiscount"].Value?.ToString() ?? "")
                                                     .FontSize(7);
 
-                                                table.Cell().Border(1).Padding(1)
-                                                    .Text(row.Cells["txtDiscount"].Value?.ToString() ?? "")
+                                                // GST
+                                                cell = table.Cell()
+                                                    .BorderVertical(1)
+                                                    .Padding(1);
+
+                                                if (isLastRow)
+                                                    cell = cell.BorderBottom(1);
+
+                                                cell.Text(row.Cells["txtGST"].Value?.ToString() ?? "")
                                                     .FontSize(7);
 
-                                                table.Cell().Border(1).Padding(1)
-                                                    .Text(row.Cells["txtGST"].Value?.ToString() ?? "")
+                                                // AMOUNT
+                                                cell = table.Cell()
+                                                    .BorderVertical(1)
+                                                    .Padding(1);
+
+                                                if (isLastRow)
+                                                    cell = cell.BorderBottom(1);
+
+                                                cell.Text(row.Cells["txtAmount"].Value?.ToString() ?? "")
                                                     .FontSize(7);
 
-                                                table.Cell().Border(1).Padding(1)
-                                                    .Text(row.Cells["txtAmount"].Value?.ToString() ?? "")
-                                                    .FontSize(7);
+                                                itemCount++;
 
-                                                productList.Add(row.Cells["txtItemName"].Value?.ToString() ?? "", row.Cells["txtQty"].Value?.ToString() ?? "");
+                                                productList.Add(
+                                                    row.Cells["txtItemName"].Value?.ToString() ?? "",
+                                                    row.Cells["txtQty"].Value?.ToString() ?? ""
+                                                );
+                                            }
+                                            for (int i = itemCount; i < 14; i++)
+                                            {
+                                                bool isLastRow = (i == 13);
+
+                                                for (int j = 0; j < 8; j++)
+                                                {
+                                                    var cell = table.Cell()
+                                                        .BorderVertical(1);
+
+                                                    if (isLastRow)
+                                                        cell = cell.BorderBottom(1);
+
+                                                    cell.Text("");
+                                                }
                                             }
                                         });
 
@@ -1113,18 +1190,6 @@ namespace ProductCRMAPI
                 
                 dgvItems.Rows.RemoveAt(e.RowIndex);
             }
-        }
-
-        private byte[] GenerateQrCode(string paymentData)
-        {
-            var qrGenerator = new QRCodeGenerator();
-            var qrCodeData = qrGenerator.CreateQrCode(
-                paymentData,
-                QRCodeGenerator.ECCLevel.Q);
-
-            var pngQrCode = new PngByteQRCode(qrCodeData);
-
-            return pngQrCode.GetGraphic(20);
         }
         private void ChkPayment_CheckedChanged(object sender, EventArgs e)
         {
