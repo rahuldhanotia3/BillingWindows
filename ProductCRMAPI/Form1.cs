@@ -302,6 +302,7 @@ namespace ProductCRMAPI
             txtDiscount.Clear();
             txtGST.Clear();
             txtAmount.Clear();
+            txtAvailableQty.Clear();
         }
         private void dgvItems_CellEndEdit(object sender,DataGridViewCellEventArgs e)
         {
@@ -464,7 +465,7 @@ namespace ProductCRMAPI
         private void txtItemName_KeyUp(object sender, KeyEventArgs e)
         {
             txtlistbox.Items.Clear();
-
+            ClearItemFields();
             string searchText = txtItemName.Text.Trim().ToLower();
 
             if (string.IsNullOrEmpty(searchText))
