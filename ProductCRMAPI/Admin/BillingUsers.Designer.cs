@@ -70,6 +70,7 @@ namespace ProductCRMAPI
             this.dgvUsers.Location = new System.Drawing.Point(14, 300);
             this.dgvUsers.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.dgvUsers.Name = "dgvUsers";
+            this.dgvUsers.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.ColorTranslator.FromHtml("#bedbed");
             this.dgvUsers.ReadOnly = true;
             this.dgvUsers.RowHeadersVisible = false;
             this.dgvUsers.RowHeadersWidth = 62;

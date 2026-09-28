@@ -465,7 +465,6 @@ namespace ProductCRMAPI
         private void txtItemName_KeyUp(object sender, KeyEventArgs e)
         {
             txtlistbox.Items.Clear();
-            ClearItemFields();
             string searchText = txtItemName.Text.Trim().ToLower();
 
             if (string.IsNullOrEmpty(searchText))
@@ -790,8 +789,8 @@ namespace ProductCRMAPI
             {
                 container.Page(page =>
                 {
-                    page.Size(PageSizes.A5.Landscape());
-                    page.Margin(1);
+                    page.Size(PageSizes.A5);
+                    page.Margin(4);
                     page.Content().Column(main =>
                     {
                         // EXACT HALF PAGEs
@@ -800,7 +799,6 @@ namespace ProductCRMAPI
                             .Element(container1 =>
                             {
                                 container1
-                                    .Width(297)
                                     .Column(col =>
                                     {
                                         col.Spacing(2);
@@ -820,16 +818,16 @@ namespace ProductCRMAPI
                                                 c.Item().Text("Contact : +91 9977422337").FontSize(8);
                                             });
 
-                                            row.ConstantItem(50)
-                                                .Height(50)
-                                                .Image(ImageToBytes(Properties.Resources.logo120));
+                                            row.ConstantItem(70)
+                                                .Height(70)
+                                                .Image(ImageToBytes(Properties.Resources.PPLogo125));
                                         });
 
                                         // ================= TITLE =================
 
                                         col.Item()
                                             .AlignCenter()
-                                            .Text("Tax Invoice")
+                                            .Text("Invoice")
                                             .FontSize(10)
                                             .Bold();
 
@@ -847,8 +845,8 @@ namespace ProductCRMAPI
 
                                                 left.Item().Text($"State : {txtState.Text}").FontSize(8);
                                             });
-                                            row.ConstantItem(80);
-                                            row.RelativeItem().Column(right =>
+                                            row.ConstantItem(100);
+                                            row.RelativeItem().AlignRight().Column(right =>
                                             {
                                                 right.Item().Text($"Invoice No : {txtInvoiceNo.Text}").FontSize(8);
                                                 right.Item().Text($"Invoice Date : {txtInvoiceDate.Value:dd/MM/yyyy}").FontSize(8);
@@ -879,16 +877,16 @@ namespace ProductCRMAPI
                                                 header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Qty").Bold().FontSize(7);
                                                 header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Unit").Bold().FontSize(7);
                                                 header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Rate").Bold().FontSize(7);
-                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Discount").Bold().FontSize(7);
-                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("GST").Bold().FontSize(7);
+                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Discount(%)").Bold().FontSize(7);
+                                                header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("GST(%)").Bold().FontSize(7);
                                                 header.Cell().Border(1).Background("#9B7AD9").Padding(1).Text("Amount").Bold().FontSize(7);
                                             });
                                             int itemCount = 0;
                                             var validRows = dgvItems.Rows.Cast<DataGridViewRow>().Where(r => !r.IsNewRow).ToList();
                                             foreach (DataGridViewRow row in validRows)
                                             {
-                                                bool isLastRow = (itemCount == 13 ||
-                                                                  (itemCount == validRows.Count - 1 && validRows.Count >= 14));
+                                                bool isLastRow = (itemCount == 15 ||
+                                                                  (itemCount == validRows.Count - 1 && validRows.Count >= 16));
 
                                                 // ITEM
                                                 var cell = table.Cell()
@@ -988,9 +986,9 @@ namespace ProductCRMAPI
                                                     row.Cells["txtQty"].Value?.ToString() ?? ""
                                                 );
                                             }
-                                            for (int i = itemCount; i < 14; i++)
+                                            for (int i = itemCount; i < 16; i++)
                                             {
-                                                bool isLastRow = (i == 13);
+                                                bool isLastRow = (i == 15);
 
                                                 for (int j = 0; j < 8; j++)
                                                 {
@@ -998,7 +996,10 @@ namespace ProductCRMAPI
                                                         .BorderVertical(1);
 
                                                     if (isLastRow)
+                                                    {
+                                                        //cell = cell.BorderTop(1);
                                                         cell = cell.BorderBottom(1);
+                                                    }
 
                                                     cell.Text("");
                                                 }
@@ -1020,11 +1021,24 @@ namespace ProductCRMAPI
                                                 columns.RelativeColumn();
                                             });
 
-                                            table.Cell().Text($"Sub Total : {SubTotal:0.00}").FontSize(7);
-                                            table.Cell().Text($"Discount : {TotalDiscount:0.00}").FontSize(7);
-                                            table.Cell().Text($"SGST : {TotalSGST:0.00}").FontSize(7);
-                                            table.Cell().Text($"CGST : {TotalCGST:0.00}").FontSize(7);
-                                            table.Cell().Text($"Total : {finalTotal1:0.00}").FontSize(7).Bold();
+                                            table.Cell().Text($"Sub Total : {SubTotal:0.00}").Bold().FontSize(7);
+                                            table.Cell().Text($"Discount : {TotalDiscount:0.00}").Bold().FontSize(7);
+                                            table.Cell().Text($"SGST : {TotalSGST:0.00}").Bold().FontSize(7);
+                                            table.Cell().Text($"CGST : {TotalCGST:0.00}").Bold().FontSize(7);
+                                            table.Cell().Text($"Total : {finalTotal1:0.00}").Bold().FontSize(7).Bold();
+                                        });
+                                        //==================Bank details======================
+                                        col.Item().PaddingVertical(3).LineHorizontal(0.5f).LineColor(Colors.Black);
+                                        col.Item().Row(row =>
+                                        {
+                                            row.RelativeItem().AlignRight().Column(right =>
+                                            {
+                                                right.Item().Text("Company's Bank Details").Bold().FontSize(8);
+                                                right.Item().Text("Ac Holders Name     : MS AARAV ENTERPRISES").FontSize(8);
+                                                right.Item().Text("Bank Name           : Punjab National Bank").FontSize(8);
+                                                right.Item().Text("A/C No              : 0291002100047855").FontSize(8);
+                                                right.Item().Text("Branch OR IFSC Code : PUNB0029100").FontSize(8);
+                                            });
                                         });
 
                                         // ================= AMOUNT IN WORDS =================
@@ -1040,7 +1054,7 @@ namespace ProductCRMAPI
                                         // ================= SIGNATURE =================
 
                                         col.Item()
-                                            .PaddingTop(20)
+                                            .PaddingTop(15)
                                             .AlignRight()
                                             .Text("Authorized Signatory")
                                             .FontSize(8);
@@ -1048,7 +1062,7 @@ namespace ProductCRMAPI
                             });
 
                         // Remaining half blank
-                        main.Item().Height(297);
+                        //main.Item().Height(297);
                     });
                 });
             }).GeneratePdf();

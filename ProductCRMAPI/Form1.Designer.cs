@@ -95,6 +95,7 @@ namespace ProductCRMAPI
             this.dgvItems.Location = new System.Drawing.Point(14, 446);
             this.dgvItems.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.dgvItems.Name = "dgvItems";
+            this.dgvItems.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.ColorTranslator.FromHtml("#bedbed");
             this.dgvItems.ReadOnly = true;
             this.dgvItems.RowHeadersVisible = false;
             this.dgvItems.RowHeadersWidth = 62;

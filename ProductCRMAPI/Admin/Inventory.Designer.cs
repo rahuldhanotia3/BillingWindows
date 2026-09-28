@@ -76,6 +76,7 @@ namespace ProductCRMAPI
             this.dgvInventory.Location = new System.Drawing.Point(14, 296);
             this.dgvInventory.Margin = new System.Windows.Forms.Padding(5, 4, 5, 4);
             this.dgvInventory.Name = "dgvInventory";
+            this.dgvInventory.AlternatingRowsDefaultCellStyle.BackColor = System.Drawing.ColorTranslator.FromHtml("#bedbed");
             this.dgvInventory.ReadOnly = true;
             this.dgvInventory.RowHeadersVisible = false;
             this.dgvInventory.RowHeadersWidth = 200;
