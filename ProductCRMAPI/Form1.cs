@@ -637,7 +637,7 @@ namespace ProductCRMAPI
 
             ExcelPackage.License.SetNonCommercialPersonal("Rahul");
 
-            HashSet<string> uniqueItems = new HashSet<string>();
+            List<string> uniqueItems = new List<string>();
 
             using (var package = new ExcelPackage(new FileInfo(excelInvoice)))
             {
@@ -654,12 +654,9 @@ namespace ProductCRMAPI
                     // Search matching names
                     if (itemName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
                     {
-                        if (uniqueItems.Add(itemName))
-                        {
-                            listBoxBillingSearch.Items.Add(
+                        listBoxBillingSearch.Items.Add(
                                 itemName + " : " + address
                             );
-                        }
                     }
 
                     // Exact match
