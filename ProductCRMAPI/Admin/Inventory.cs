@@ -33,6 +33,7 @@ namespace ProductCRMAPI
     {
         string excelInvoice = ConfigurationManager.AppSettings["excelInvoice"];
         string excelInventory = ConfigurationManager.AppSettings["excelInventory"];
+        private Timer slideTimer = new Timer();
         public Inventory()
         {
             InitializeComponent();
@@ -56,6 +57,11 @@ namespace ProductCRMAPI
             txtItemName.KeyUp += txtItemName_KeyUp;
             txtItemName.KeyDown += listBoxItems_KeyDown;
             listboxItem.MouseClick += listBoxItems_Click;
+
+            dgvInventory.Left = -dgvInventory.Width; // Start outside form
+            slideTimer.Interval = 10;
+            slideTimer.Tick += SlideTimer_Tick;
+            slideTimer.Start();
         }
         
         private void LoadInventory()
@@ -86,6 +92,20 @@ namespace ProductCRMAPI
                     );
                 }
             }
+        }
+        private void SlideTimer_Tick(object sender, EventArgs e)
+        {
+            int targetLeft = 10;
+            int distance = targetLeft - dgvInventory.Left;
+
+            if (Math.Abs(distance) <= 2)
+            {
+                dgvInventory.Left = targetLeft;
+                slideTimer.Stop();
+                return;
+            }
+
+            dgvInventory.Left += distance / 5; 
         }
         private void btnSearch_Click(object sender, EventArgs e)
         {

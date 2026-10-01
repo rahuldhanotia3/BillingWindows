@@ -32,6 +32,7 @@ namespace ProductCRMAPI
         string excelInvoice = ConfigurationManager.AppSettings["excelInvoice"];
         string excelInventory = ConfigurationManager.AppSettings["excelInventory"];
         Dictionary<string, string> productList = new Dictionary<string, string>();
+        private Timer slideTimer = new Timer();
         public BillingUsers()
         {
             InitializeComponent();
@@ -48,6 +49,10 @@ namespace ProductCRMAPI
             LoadUsers();
             listBoxBillingSearch.MouseClick += listBoxBilling_Click;
             //txtBillTo.Leave += txtListBox_LeaveClick;
+            dgvUsers.Left = -dgvUsers.Width; // Start outside form
+            slideTimer.Interval = 10;
+            slideTimer.Tick += SlideTimer_Tick;
+            slideTimer.Start();
         }
         private void InitializeInvoiceGrid()
         {
@@ -90,6 +95,20 @@ namespace ProductCRMAPI
                     );
                 }
             }
+        }
+        private void SlideTimer_Tick(object sender, EventArgs e)
+        {
+            int targetLeft = 10;
+            int distance = targetLeft - dgvUsers.Left;
+
+            if (Math.Abs(distance) <= 2)
+            {
+                dgvUsers.Left = targetLeft;
+                slideTimer.Stop();
+                return;
+            }
+
+            dgvUsers.Left += distance / 5;
         }
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
